@@ -1,0 +1,1590 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI-Driven Classroom · Knowledge Enhancement Programme</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:#f8fafc;--bg2:#ffffff;--bg3:#f1f5f9;--bg4:#e2e8f0;
+    --border:rgba(0,0,0,0.08);--border2:rgba(0,0,0,0.14);
+    --text:#1e1b4b;--text2:#475569;--text3:#94a3b8;
+    --accent:#0891b2;--accent2:#6d28d9;--accent3:#059669;
+    --warn:#d97706;--danger:#dc2626;--fac:#6d28d9;--par:#0891b2;
+    --code-text:#0f766e;
+    --glow:0 0 20px rgba(8,145,178,0.12);--glow2:0 0 20px rgba(109,40,217,0.15);
+    --radius:12px;--radius2:8px;
+    --font-display:'Syne',sans-serif;--font-mono:'Space Mono',monospace;--font-body:'IBM Plex Sans',sans-serif;
+    --shadow:0 1px 3px rgba(0,0,0,0.07),0 4px 12px rgba(0,0,0,0.05);
+    --shadow2:0 4px 20px rgba(0,0,0,0.1);
+  }
+  [data-theme="dark"] {
+    --bg:#09090f;--bg2:#111118;--bg3:#18181f;--bg4:#1e1e28;
+    --border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.12);
+    --text:#f0f0f8;--text2:#9090a8;--text3:#5a5a72;
+    --accent:#22d3ee;--accent2:#a78bfa;--accent3:#34d399;
+    --warn:#fbbf24;--danger:#f87171;--fac:#a78bfa;--par:#22d3ee;
+    --code-text:#67e8f9;
+    --shadow:0 1px 3px rgba(0,0,0,0.3);--shadow2:0 4px 20px rgba(0,0,0,0.4);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { font-size: 14px; }
+  body {
+    font-family: var(--font-body);
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+    transition: background 0.3s, color 0.3s;
+  }
+
+  /* HEADER */
+  .header {
+    position: sticky; top: 0; z-index: 100;
+    background: var(--bg2);
+    border-bottom: 1px solid var(--border);
+    padding: 0 24px;
+    height: 56px;
+    display: flex; align-items: center; justify-content: space-between;
+    backdrop-filter: blur(12px);
+  }
+  .header-left { display: flex; align-items: center; gap: 16px; }
+  .logo { font-family: var(--font-display); font-weight: 800; font-size: 1rem; letter-spacing: -0.02em; }
+  .logo span { color: var(--accent); }
+  .live-badge {
+    display: flex; align-items: center; gap: 6px;
+    font-family: var(--font-mono); font-size: 0.65rem;
+    color: var(--accent3);
+    background: rgba(16,185,129,0.12);
+    padding: 3px 10px; border-radius: 999px;
+    border: 1px solid rgba(16,185,129,0.25);
+  }
+  .live-dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--accent3);
+    animation: pulse 1.5s infinite;
+  }
+  @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.5;transform:scale(0.8)} }
+
+  .header-right { display: flex; align-items: center; gap: 10px; }
+  .view-tabs {
+    display: flex; gap: 4px;
+    background: var(--bg3); border-radius: 10px; padding: 3px;
+    border: 1px solid var(--border);
+  }
+  .tab-btn {
+    padding: 6px 16px; border-radius: 8px; border: none;
+    font-family: var(--font-body); font-size: 0.8rem; font-weight: 500;
+    cursor: pointer; transition: all 0.2s;
+    color: var(--text2); background: transparent;
+  }
+  .tab-btn.active-fac { background: var(--fac); color: #fff; box-shadow: 0 2px 12px rgba(124,58,237,0.4); }
+  .tab-btn.active-par { background: var(--par); color: #000; box-shadow: 0 2px 12px rgba(0,229,255,0.35); }
+  .icon-btn {
+    width: 34px; height: 34px; border-radius: 8px; border: 1px solid var(--border2);
+    background: var(--bg3); color: var(--text2);
+    cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1rem;
+    transition: all 0.2s;
+  }
+  .icon-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* MAIN */
+  .view { display: none; }
+  .view.active { display: block; }
+
+  /* GRID LAYOUTS */
+  .fac-grid {
+    display: grid;
+    grid-template-columns: 280px 1fr 300px;
+    grid-template-rows: auto 1fr auto;
+    gap: 16px; padding: 16px;
+    min-height: calc(100vh - 56px);
+  }
+  .par-grid {
+    display: grid;
+    grid-template-columns: 260px 1fr;
+    gap: 16px; padding: 16px;
+    min-height: calc(100vh - 56px);
+  }
+
+  /* CARDS */
+  .card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    transition: border-color 0.2s;
+  }
+  .card:hover { border-color: var(--border2); }
+  .card-header {
+    padding: 14px 16px 10px;
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .card-title {
+    font-family: var(--font-display); font-weight: 700;
+    font-size: 0.8rem; letter-spacing: 0.04em; text-transform: uppercase;
+    color: var(--text2);
+  }
+  .card-body { padding: 14px 16px; }
+
+  /* SESSION CONTROL */
+  .session-grid { display: flex; flex-direction: column; gap: 6px; }
+  .session-btn {
+    width: 100%; padding: 10px 14px; border-radius: var(--radius2);
+    border: 1px solid var(--border); background: var(--bg3);
+    color: var(--text); cursor: pointer; text-align: left;
+    font-family: var(--font-body); font-size: 0.8rem;
+    display: flex; align-items: center; gap: 10px;
+    transition: all 0.2s;
+  }
+  .session-btn:hover { border-color: var(--fac); background: rgba(124,58,237,0.08); }
+  .session-btn.active { border-color: var(--fac); background: rgba(124,58,237,0.15); color: #c4b5fd; }
+  .session-num {
+    font-family: var(--font-mono); font-size: 0.65rem;
+    color: var(--text3); min-width: 18px;
+  }
+  .session-btn.active .session-num { color: var(--fac); }
+
+  /* PARTICIPANT TABLE */
+  .ptable { width: 100%; border-collapse: collapse; font-size: 0.78rem; }
+  .ptable th {
+    text-align: left; padding: 8px 10px;
+    font-family: var(--font-mono); font-size: 0.65rem; letter-spacing: 0.05em;
+    color: var(--text3); text-transform: uppercase;
+    border-bottom: 1px solid var(--border);
+  }
+  .ptable td { padding: 8px 10px; border-bottom: 1px solid var(--border); }
+  .ptable tr:last-child td { border-bottom: none; }
+  .ptable tr { transition: background 0.15s; }
+  .ptable tr:hover td { background: var(--bg3); }
+  .status-dot {
+    width: 7px; height: 7px; border-radius: 50%;
+    display: inline-block; margin-right: 6px;
+  }
+  .status-dot.online { background: var(--accent3); animation: pulse 2s infinite; }
+  .status-dot.idle { background: var(--warn); }
+  .activity-tag {
+    font-size: 0.68rem; font-family: var(--font-mono);
+    padding: 2px 7px; border-radius: 5px;
+    background: rgba(0,229,255,0.1); color: var(--accent);
+    border: 1px solid rgba(0,229,255,0.2);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 160px; display: inline-block;
+  }
+
+  /* SUBMISSIONS PANEL (FAC) */
+  .submission-feed { display: flex; flex-direction: column; gap: 10px; max-height: 300px; overflow-y: auto; }
+  .sub-card {
+    border: 1px solid var(--border); border-radius: var(--radius2);
+    background: var(--bg3); padding: 10px 12px;
+    animation: slideIn 0.3s ease;
+  }
+  @keyframes slideIn { from{opacity:0;transform:translateY(-8px)} to{opacity:1;transform:translateY(0)} }
+  .sub-card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+  .sub-author { font-weight: 600; font-size: 0.78rem; }
+  .sub-time { font-family: var(--font-mono); font-size: 0.65rem; color: var(--text3); }
+  .sub-content {
+    font-family: var(--font-mono); font-size: 0.72rem; color: var(--accent);
+    background: var(--bg4); border-radius: 6px; padding: 8px;
+    max-height: 80px; overflow-y: auto; white-space: pre-wrap; word-break: break-all;
+  }
+
+  /* ANALYTICS */
+  .poll-chart { display: flex; flex-direction: column; gap: 10px; }
+  .poll-item { display: flex; flex-direction: column; gap: 4px; }
+  .poll-label { display: flex; justify-content: space-between; font-size: 0.75rem; }
+  .poll-label span:last-child { color: var(--text3); font-family: var(--font-mono); }
+  .poll-bar-bg { background: var(--bg3); border-radius: 999px; height: 8px; overflow: hidden; }
+  .poll-bar {
+    height: 100%; border-radius: 999px;
+    background: linear-gradient(90deg, var(--accent2), var(--accent));
+    transition: width 0.8s cubic-bezier(0.4,0,0.2,1);
+  }
+
+  /* REVEAL TOGGLE */
+  .reveal-section { padding: 16px; }
+  .toggle-row { display: flex; align-items: center; justify-content: space-between; }
+  .toggle-label { font-size: 0.85rem; font-weight: 500; }
+  .toggle-label small { display: block; color: var(--text3); font-size: 0.72rem; font-weight: 400; margin-top: 2px; }
+  .toggle {
+    position: relative; width: 48px; height: 26px; cursor: pointer;
+  }
+  .toggle input { opacity: 0; width: 0; height: 0; position: absolute; }
+  .toggle-track {
+    position: absolute; inset: 0; border-radius: 999px;
+    background: var(--bg4); border: 1px solid var(--border2);
+    transition: background 0.3s, box-shadow 0.3s;
+  }
+  .toggle input:checked ~ .toggle-track {
+    background: var(--accent3);
+    box-shadow: 0 0 12px rgba(16,185,129,0.4);
+  }
+  .toggle-thumb {
+    position: absolute; left: 3px; top: 3px;
+    width: 18px; height: 18px; border-radius: 50%;
+    background: #fff; transition: transform 0.3s;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+  }
+  .toggle input:checked ~ .toggle-track ~ .toggle-thumb { transform: translateX(22px); }
+
+  /* GALLERY */
+  .gallery-wall {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 10px; padding: 14px;
+  }
+  .gallery-item {
+    background: var(--bg3); border: 1px solid var(--border);
+    border-radius: var(--radius2); padding: 12px;
+    animation: popIn 0.35s cubic-bezier(0.34,1.56,0.64,1);
+  }
+  @keyframes popIn { from{opacity:0;transform:scale(0.85)} to{opacity:1;transform:scale(1)} }
+  .gallery-item-title { font-size: 0.75rem; font-weight: 600; margin-bottom: 4px; }
+  .gallery-item-author { font-size: 0.68rem; color: var(--text3); margin-bottom: 8px; }
+  .gallery-item-code {
+    font-family: var(--font-mono); font-size: 0.65rem; color: var(--accent);
+    background: var(--bg4); border-radius: 5px; padding: 6px;
+    max-height: 60px; overflow: hidden; white-space: pre;
+    text-overflow: ellipsis;
+  }
+
+  /* TIMELINE */
+  .timeline { display: flex; flex-direction: column; gap: 0; }
+  .tl-item { display: flex; gap: 12px; position: relative; }
+  .tl-item:not(:last-child) .tl-line { height: 100%; }
+  .tl-left { display: flex; flex-direction: column; align-items: center; width: 20px; flex-shrink: 0; }
+  .tl-dot {
+    width: 14px; height: 14px; border-radius: 50%; flex-shrink: 0;
+    border: 2px solid var(--border2); background: var(--bg3);
+    transition: all 0.3s;
+    position: relative; z-index: 1; margin-top: 2px;
+  }
+  .tl-item.done .tl-dot { background: var(--accent3); border-color: var(--accent3); box-shadow: 0 0 8px rgba(16,185,129,0.4); }
+  .tl-item.active .tl-dot { background: var(--accent); border-color: var(--accent); box-shadow: 0 0 10px rgba(0,229,255,0.5); animation: pulse 1.5s infinite; }
+  .tl-item.upcoming .tl-dot { opacity: 0.4; }
+  .tl-line { width: 1px; flex: 1; background: var(--border); margin: 2px 0; min-height: 20px; }
+  .tl-right { padding: 0 0 18px 0; flex: 1; }
+  .tl-session { font-size: 0.72rem; color: var(--text3); font-family: var(--font-mono); margin-bottom: 2px; }
+  .tl-title { font-size: 0.82rem; font-weight: 600; }
+  .tl-item.active .tl-title { color: var(--accent); }
+  .tl-item.done .tl-title { color: var(--text3); text-decoration: line-through; }
+  .tl-meta { font-size: 0.7rem; color: var(--text3); margin-top: 3px; }
+  .tl-badge {
+    display: inline-block; font-size: 0.62rem; font-family: var(--font-mono);
+    padding: 1px 7px; border-radius: 5px; margin-top: 4px;
+  }
+  .badge-done { background: rgba(16,185,129,0.15); color: var(--accent3); border: 1px solid rgba(16,185,129,0.2); }
+  .badge-live { background: rgba(0,229,255,0.12); color: var(--accent); border: 1px solid rgba(0,229,255,0.25); }
+  .badge-up { background: rgba(255,255,255,0.05); color: var(--text3); border: 1px solid var(--border); }
+
+  /* CHAT */
+  .chat-container { display: flex; flex-direction: column; height: 340px; }
+  .chat-messages { flex: 1; overflow-y: auto; padding: 12px; display: flex; flex-direction: column; gap: 10px; }
+  .chat-msg { display: flex; gap: 8px; }
+  .chat-msg.user { flex-direction: row-reverse; }
+  .chat-avatar {
+    width: 28px; height: 28px; border-radius: 8px; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.7rem; font-weight: 700; font-family: var(--font-mono);
+  }
+  .avatar-ai { background: linear-gradient(135deg, var(--accent2), var(--accent)); color: #fff; }
+  .avatar-user { background: var(--bg4); color: var(--text2); }
+  .chat-bubble {
+    max-width: 80%; padding: 8px 12px; border-radius: 10px;
+    font-size: 0.78rem; line-height: 1.5;
+  }
+  .bubble-ai { background: var(--bg3); border: 1px solid var(--border); color: var(--text); border-radius: 10px 10px 10px 2px; }
+  .bubble-user { background: linear-gradient(135deg, var(--accent2), #6d28d9); color: #fff; border-radius: 10px 10px 2px 10px; }
+  .bubble-typing { display: flex; align-items: center; gap: 4px; }
+  .typing-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--text3); animation: typing 1.2s infinite; }
+  .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+  .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+  @keyframes typing { 0%,80%,100%{transform:translateY(0)} 40%{transform:translateY(-6px)} }
+  .chat-input-row { display: flex; gap: 8px; padding: 10px 12px; border-top: 1px solid var(--border); }
+  .chat-input {
+    flex: 1; background: var(--bg3); border: 1px solid var(--border);
+    border-radius: 8px; padding: 8px 12px; color: var(--text);
+    font-family: var(--font-body); font-size: 0.8rem; resize: none;
+    outline: none; transition: border-color 0.2s;
+  }
+  .chat-input:focus { border-color: var(--accent2); }
+  .send-btn {
+    padding: 8px 16px; border-radius: 8px; border: none;
+    background: linear-gradient(135deg, var(--accent2), #6d28d9);
+    color: #fff; cursor: pointer; font-size: 0.8rem; font-weight: 600;
+    transition: opacity 0.2s, transform 0.1s;
+  }
+  .send-btn:hover { opacity: 0.85; }
+  .send-btn:active { transform: scale(0.97); }
+
+  /* VERNACULAR TOGGLE */
+  .vt-row { display: flex; align-items: center; gap: 10px; padding: 8px 12px; border-bottom: 1px solid var(--border); flex-wrap: wrap; }
+  .vt-label { font-size: 0.73rem; color: var(--text2); }
+  .lang-btn {
+    padding: 4px 10px; border-radius: 6px; border: 1px solid var(--border);
+    background: var(--bg3); color: var(--text2); cursor: pointer; font-size: 0.72rem;
+    transition: all 0.15s;
+  }
+  .lang-btn.active { background: var(--accent2); border-color: var(--accent2); color: #fff; }
+
+  /* CODE EDITOR */
+  .code-editor {
+    background: var(--bg3); border: 1px solid var(--border);
+    border-radius: var(--radius2); overflow: hidden;
+  }
+  .editor-toolbar { padding: 8px 12px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+  .editor-dots { display: flex; gap: 5px; }
+  .editor-dot { width: 10px; height: 10px; border-radius: 50%; }
+  .dot-r { background: #ef4444; } .dot-y { background: #f59e0b; } .dot-g { background: #10b981; }
+  .editor-lang { font-family: var(--font-mono); font-size: 0.65rem; color: var(--text3); }
+  .editor-textarea {
+    width: 100%; min-height: 160px; background: transparent; border: none;
+    padding: 12px; color: var(--accent); font-family: var(--font-mono);
+    font-size: 0.78rem; resize: vertical; outline: none; line-height: 1.6;
+  }
+
+  /* SUBMIT BTN */
+  .submit-btn {
+    width: 100%; padding: 11px; border-radius: var(--radius2); border: none;
+    background: linear-gradient(90deg, var(--par), #00b4cc);
+    color: #000; font-weight: 700; font-size: 0.85rem; cursor: pointer;
+    font-family: var(--font-display); letter-spacing: 0.02em;
+    transition: all 0.2s; position: relative; overflow: hidden;
+  }
+  .submit-btn::after {
+    content: ''; position: absolute; inset: 0;
+    background: rgba(255,255,255,0.15);
+    transform: scaleX(0); transform-origin: left;
+    transition: transform 0.3s;
+  }
+  .submit-btn:hover::after { transform: scaleX(1); }
+  .submit-btn:active { transform: scale(0.99); }
+
+  /* NOTIFICATION TOAST */
+  .toast {
+    position: fixed; bottom: 24px; right: 24px; z-index: 999;
+    padding: 12px 18px; border-radius: var(--radius2);
+    background: var(--bg2); border: 1px solid var(--accent3);
+    box-shadow: 0 4px 24px rgba(0,0,0,0.4), 0 0 0 1px rgba(16,185,129,0.1);
+    font-size: 0.8rem; color: var(--accent3);
+    animation: toastIn 0.35s cubic-bezier(0.34,1.56,0.64,1);
+    max-width: 300px;
+  }
+  @keyframes toastIn { from{opacity:0;transform:translateY(20px) scale(0.9)} to{opacity:1;transform:none} }
+
+  /* SCROLLBARS */
+  ::-webkit-scrollbar { width: 4px; height: 4px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 4px; }
+
+  /* UTILITY */
+  .flex-between { display: flex; align-items: center; justify-content: space-between; }
+  .badge {
+    font-size: 0.65rem; font-family: var(--font-mono); padding: 2px 8px;
+    border-radius: 5px; border: 1px solid;
+  }
+  .badge-accent { background: rgba(0,229,255,0.1); color: var(--accent); border-color: rgba(0,229,255,0.2); }
+  .badge-fac { background: rgba(124,58,237,0.15); color: #c4b5fd; border-color: rgba(124,58,237,0.3); }
+  .badge-green { background: rgba(16,185,129,0.12); color: var(--accent3); border-color: rgba(16,185,129,0.25); }
+  .stat-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 14px; }
+  .stat-card { background: var(--bg3); border-radius: var(--radius2); padding: 10px 14px; border: 1px solid var(--border); }
+  .stat-val { font-family: var(--font-mono); font-size: 1.4rem; font-weight: 700; }
+  .stat-lbl { font-size: 0.68rem; color: var(--text3); margin-top: 2px; }
+  .col-full { grid-column: 1 / -1; }
+  .fac-grid > .col-full { grid-column: 1 / -1; }
+  .tip { font-size: 0.72rem; color: var(--text3); padding: 8px 14px; background: var(--bg3); border-radius: var(--radius2); border: 1px dashed var(--border2); }
+
+  .modal-overlay{position:fixed;inset:0;z-index:500;background:rgba(0,0,0,0.5);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;}
+  .modal-box{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius);box-shadow:0 24px 80px rgba(0,0,0,0.2);width:90vw;max-width:860px;max-height:90vh;display:flex;flex-direction:column;animation:popIn 0.25s cubic-bezier(0.34,1.56,0.64,1);}
+  .modal-header{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+  .modal-title{font-family:var(--font-display);font-weight:700;font-size:0.9rem;color:var(--text);}
+  .modal-subtitle{font-size:0.72rem;color:var(--text3);margin-top:2px;}
+  .modal-close{width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--bg3);color:var(--text2);cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center;transition:all 0.15s;}
+  .modal-close:hover{background:var(--danger);color:#fff;border-color:var(--danger);}
+  .modal-body{flex:1;overflow:auto;padding:16px;display:flex;flex-direction:column;gap:12px;}
+  .modal-notice{font-size:0.72rem;color:var(--text2);background:var(--bg3);padding:8px 12px;border-radius:6px;border:1px dashed var(--border2);}
+  .modal-iframe-wrap{border:1px solid var(--border2);border-radius:var(--radius2);overflow:hidden;background:#fff;flex:1;min-height:300px;}
+  .modal-iframe{width:100%;height:100%;min-height:300px;border:none;display:block;}
+  #facScriptBody{max-height:320px;overflow-y:auto;}
+  .script-section{margin-bottom:14px;}
+  .script-section-title{font-family:var(--font-display);font-weight:700;font-size:0.72rem;text-transform:uppercase;letter-spacing:0.05em;color:var(--fac);margin-bottom:5px;padding-bottom:4px;border-bottom:1px solid var(--border);}
+  .script-section-body{font-size:0.78rem;line-height:1.7;color:var(--text2);}
+  .script-loading{display:flex;align-items:center;gap:10px;padding:16px;color:var(--text3);font-size:0.78rem;}
+  .script-spinner{width:18px;height:18px;border-radius:50%;border:2px solid var(--border2);border-top-color:var(--fac);animation:spin 0.7s linear infinite;flex-shrink:0;}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .preview-btn{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:5px;border:1px solid var(--border2);background:var(--bg2);color:var(--par);cursor:pointer;font-size:0.7rem;transition:all 0.15s;white-space:nowrap;flex-shrink:0;}
+  .preview-btn:hover{background:rgba(8,145,178,0.1);border-color:var(--par);}
+  .add-pt-btn{padding:3px 8px;border-radius:5px;border:1px solid var(--border2);background:var(--bg3);color:var(--warn);cursor:pointer;font-size:0.7rem;transition:all 0.15s;white-space:nowrap;}
+  .add-pt-btn:hover{background:rgba(217,119,6,0.1);border-color:var(--warn);}
+  .star-filled{color:var(--warn);} .star-empty{color:var(--border2);}
+  .notice-banner{padding:10px 14px;border-radius:var(--radius2);font-size:0.78rem;font-weight:500;background:rgba(5,150,105,0.1);color:var(--accent3);border:1px solid rgba(5,150,105,0.25);display:flex;align-items:center;gap:8px;}
+  .ref-btn{padding:7px;width:100%;border-radius:6px;border:1px solid var(--border);background:var(--bg3);color:var(--text2);cursor:pointer;font-size:0.75rem;font-family:var(--font-body);margin-top:10px;transition:all 0.15s;}
+  .ref-btn:hover{border-color:var(--par);color:var(--par);}
+
+</style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+
+<!-- ===== SUPABASE SETUP MODAL ===== -->
+<div class="modal-overlay" id="setupModal" style="display:none">
+  <div class="modal-box" style="max-width:480px">
+    <div class="modal-header">
+      <div><div class="modal-title">Connect to Supabase</div>
+      <div class="modal-subtitle">Required for real-time multi-device sync</div></div>
+    </div>
+    <div class="modal-body" style="gap:14px">
+      <div class="modal-notice">Get free credentials at <strong>supabase.com</strong> &rarr; Project Settings &rarr; API. Saved locally on your device.</div>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <div><label style="font-size:0.7rem;color:var(--text3);font-family:var(--font-mono);display:block;margin-bottom:4px">SUPABASE PROJECT URL</label>
+          <input id="setupUrl" type="text" placeholder="https://xyzabcdef.supabase.co"
+            style="width:100%;background:var(--bg3);border:1px solid var(--border2);border-radius:8px;padding:9px 12px;color:var(--text);font-family:var(--font-mono);font-size:0.78rem;outline:none"></div>
+        <div><label style="font-size:0.7rem;color:var(--text3);font-family:var(--font-mono);display:block;margin-bottom:4px">SUPABASE ANON KEY</label>
+          <input id="setupKey" type="password" placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+            style="width:100%;background:var(--bg3);border:1px solid var(--border2);border-radius:8px;padding:9px 12px;color:var(--text);font-family:var(--font-mono);font-size:0.78rem;outline:none"></div>
+        <div><label style="font-size:0.7rem;color:var(--text3);font-family:var(--font-mono);display:block;margin-bottom:4px">YOUR NAME (shown on submissions)</label>
+          <input id="setupName" type="text" placeholder="e.g. Priya Nair"
+            style="width:100%;background:var(--bg3);border:1px solid var(--border2);border-radius:8px;padding:9px 12px;color:var(--text);font-family:var(--font-body);font-size:0.78rem;outline:none"></div>
+      </div>
+      <button onclick="saveSetup()" style="width:100%;padding:12px;border-radius:8px;border:none;background:linear-gradient(90deg,var(--fac),#5b21b6);color:#fff;font-weight:700;font-size:0.85rem;cursor:pointer;font-family:var(--font-display)">Connect &amp; Continue &rarr;</button>
+      <div id="setupError" style="color:var(--danger);font-size:0.75rem;display:none;text-align:center"></div>
+    </div>
+  </div>
+</div>
+<header class="header">
+  <div class="header-left">
+    <div class="logo">AI<span>·</span>KEP</div>
+    <div class="live-badge">
+      <div class="live-dot"></div>
+      LIVE SESSION
+    </div>
+    <span style="font-size:0.75rem;color:var(--text3);display:none" id="sessionLabel">Day 1 · Session 1</span>
+  </div>
+  <div class="header-right">
+    <div class="view-tabs">
+      <button class="tab-btn active-fac" id="tabFac" onclick="switchView('fac')">⚙ Facilitator</button>
+      <button class="tab-btn" id="tabPar" onclick="switchView('par')">🎓 Participant</button>
+    </div>
+    <div id="connStatus" onclick="showSetup()" title="Configure Supabase"
+  style="display:flex;align-items:center;gap:5px;font-family:var(--font-mono);font-size:0.65rem;
+  padding:3px 10px;border-radius:999px;border:1px solid var(--border2);
+  background:var(--bg3);color:var(--text3);cursor:pointer">
+  <span id="connDot" style="width:6px;height:6px;border-radius:50%;background:var(--text3);display:inline-block"></span>
+  <span id="connLabel">Offline</span>
+</div>
+<button class="icon-btn" onclick="toggleTheme()" title="Toggle theme" id="themeBtn">&#127769;</button>
+  </div>
+</header>
+
+<!-- ========== FACILITATOR VIEW ========== -->
+<div class="view active" id="viewFac">
+  <div class="fac-grid">
+
+    <!-- LEFT: Master Control -->
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">Master Control</span>
+          <span class="badge badge-fac">Facilitator</span>
+        </div>
+        <div class="card-body">
+          <div style="font-size:0.72rem;color:var(--text3);margin-bottom:10px;font-family:var(--font-mono)">Active Session</div>
+          <div class="session-grid" id="sessionBtns"></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">Gallery Reveal</span>
+        </div>
+        <div class="reveal-section">
+          <div class="toggle-row">
+            <div class="toggle-label">
+              Reveal Project Gallery
+              <small>Pushes submissions to all participants</small>
+            </div>
+            <label class="toggle">
+              <input type="checkbox" id="galleryToggle" onchange="toggleGallery(this.checked)">
+              <div class="toggle-track"></div>
+              <div class="toggle-thumb"></div>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">Quick Poll</span>
+        </div>
+        <div class="card-body">
+          <div class="poll-chart" id="pollChart"></div>
+          <button class="ref-btn" onclick="refreshPoll()">&#x21BB; Refresh Poll</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header"><span class="card-title">Gemini API Key</span></div>
+        <div class="card-body" style="display:flex;flex-direction:column;gap:8px">
+          <input id="geminiApiKey" type="password" placeholder="Paste key from aistudio.google.com..."
+            style="background:var(--bg3);border:1px solid var(--border2);border-radius:8px;padding:8px 12px;color:var(--text);font-size:0.78rem;outline:none;width:100%;font-family:var(--font-mono)"
+            oninput="localStorage.setItem('aikep_gemini_key',this.value)">
+          <div style="font-size:0.68rem;color:var(--text3)">Powers Socratic Tutor + Session Script</div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- CENTRE: Participant Activity -->
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <div class="stat-row">
+        <div class="stat-card">
+          <div class="stat-val" id="statOnline">12</div>
+          <div class="stat-lbl">Participants Online</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-val" id="statSubs">7</div>
+          <div class="stat-lbl">Submissions Received</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-val" style="color:var(--accent3)" id="statComp">58%</div>
+          <div class="stat-lbl">Avg. Comprehension</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-val" style="color:var(--warn)" id="statActive">5</div>
+          <div class="stat-lbl">Active in Sandbox</div>
+        </div>
+      </div>
+
+      <div class="card" style="flex:1">
+        <div class="card-header">
+          <span class="card-title">Live Participant Activity</span>
+          <span class="badge badge-green" id="onlineBadge">12 online</span>
+        </div>
+        <div style="overflow-x:auto">
+          <table class="ptable" id="participantTable"></table>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">Submission Feed</span>
+          <span class="badge badge-accent" id="subCount">7 items</span>
+        </div>
+        <div class="card-body">
+          <div class="submission-feed" id="submissionFeed"></div>
+        </div>
+      </div>
+      <div class="card" id="facScriptCard">
+        <div class="card-header">
+          <span class="card-title">Facilitator Session Script</span>
+          <div style="display:flex;gap:6px">
+            <button class="preview-btn" onclick="openScriptModal()">&#x26F6; Full Screen</button>
+            <button class="preview-btn" onclick="generateSessionScript()" id="scriptGenBtn">&#x2726; Gemini AI</button>
+          </div>
+        </div>
+        <div id="facScriptBody" style="padding:14px 16px">
+          <div style="text-align:center;color:var(--text3);font-size:0.78rem;padding:12px 0">
+            <div style="font-size:1.8rem;margin-bottom:8px">&#128221;</div>
+            Click a session button to load its script.
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- RIGHT: Gallery Panel -->
+    <div style="display:flex;flex-direction:column;gap:12px">
+
+      <!-- Gallery Reveal Toggle -->
+      <div class="card">
+        <div class="card-header"><span class="card-title">Gallery Reveal</span></div>
+        <div style="padding:16px">
+          <div style="display:flex;align-items:center;justify-content:space-between">
+            <div>
+              <div style="font-size:0.84rem;font-weight:600;color:var(--text)">Reveal Project Gallery</div>
+              <div style="font-size:0.7rem;color:var(--text3);margin-top:2px">Pushes all submissions to participant screens</div>
+            </div>
+            <label style="position:relative;width:48px;height:26px;cursor:pointer">
+              <input type="checkbox" id="galleryToggle" onchange="toggleGallery(this.checked)" style="opacity:0;width:0;height:0;position:absolute">
+              <div class="toggle-track" style="position:absolute;inset:0;border-radius:999px;background:var(--bg4);border:1px solid var(--border2);transition:background 0.3s"></div>
+              <div class="toggle-thumb" style="position:absolute;left:3px;top:3px;width:18px;height:18px;border-radius:50%;background:#fff;transition:transform 0.3s;pointer-events:none;box-shadow:0 1px 4px rgba(0,0,0,0.25)"></div>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Gallery Panel -->
+      <div class="card" style="flex:1">
+        <div class="card-header">
+          <span class="card-title">Project Gallery</span>
+          <span id="galleryStatus" class="badge" style="color:var(--text3);border-color:var(--border);background:var(--bg3)">Hidden</span>
+        </div>
+        <div id="galleryPanel">
+          <div style="padding:28px 20px;text-align:center;color:var(--text3);font-size:0.78rem">
+            <div style="font-size:2.2rem;margin-bottom:10px">&#128444;</div>
+            Toggle <strong style="color:var(--text2)">Reveal Gallery</strong> to broadcast submissions to all participants
+          </div>
+        </div>
+      </div>
+
+    </div>
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <div class="card" style="flex:1">
+        <div class="card-header">
+          <span class="card-title">Project Gallery</span>
+          <span id="galleryStatus" class="badge badge-fac" style="color:var(--text3);border-color:var(--border)">Hidden</span>
+        </div>
+        <div id="galleryPanel">
+          <div style="padding:24px;text-align:center;color:var(--text3);font-size:0.78rem">
+            <div style="font-size:2rem;margin-bottom:8px">🖼</div>
+            Toggle "Reveal Gallery" to push submissions to all participants
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ========== PARTICIPANT VIEW ========== -->
+<div class="view" id="viewPar">
+  <div class="par-grid">
+
+    <!-- LEFT: Timeline -->
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">Workshop Timeline</span>
+          <span class="badge badge-accent">Day 1</span>
+        </div>
+        <div class="card-body">
+          <div class="timeline" id="participantTimeline"></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header"><span class="card-title">You</span></div>
+        <div class="card-body" style="display:flex;flex-direction:column;gap:8px">
+          <div style="display:flex;align-items:center;gap:8px">
+            <div class="status-dot online"></div>
+            <span style="font-size:0.82rem;font-weight:600">Participant #P07</span>
+          </div>
+          <div class="tip">Current: <strong id="currentSessionLabel" style="color:var(--accent)">Session 1 – Introduction</strong></div>
+          <div id="parGalleryNotice" style="display:none">
+            <div class="notice-banner">&#127881; Gallery is LIVE! Peer submissions visible below.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: Workspace -->
+    <div style="display:flex;flex-direction:column;gap:12px">
+
+      <!-- Socratic Tutor -->
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">Socratic Tutor Sandbox</span>
+          <span class="badge badge-accent">AI-Powered</span>
+        </div>
+        <div class="vt-row">
+          <span class="vt-label">Vernacular Bridge:</span>
+          <button class="lang-btn active" onclick="setLang('en', this)">English</button>
+          <button class="lang-btn" onclick="setLang('kn', this)">ಕನ್ನಡ</button>
+          <button class="lang-btn" onclick="setLang('hi', this)">हिंदी</button>
+          <button class="lang-btn" onclick="setLang('mr', this)">मराठी</button>
+        </div>
+        <div class="chat-container">
+          <div class="chat-messages" id="chatMessages"></div>
+          <div class="chat-input-row">
+            <textarea class="chat-input" id="chatInput" rows="2" placeholder="Ask a Socratic question about your engineering concept..." onkeydown="handleChatKey(event)"></textarea>
+            <button class="send-btn" onclick="sendMessage()">Ask →</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Code Submission -->
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">Live Submission Module</span>
+          <span class="badge badge-green">→ Facilitator</span>
+        </div>
+        <div class="card-body" style="display:flex;flex-direction:column;gap:10px">
+          <input id="submissionTitle" type="text" placeholder="Simulation title (e.g., Torsional Pendulum Simulation)"
+            style="background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:8px 12px;color:var(--text);font-size:0.8rem;outline:none;width:100%;font-family:var(--font-body)">
+          <div class="code-editor">
+            <div class="editor-toolbar">
+              <div class="editor-dots">
+                <div class="editor-dot dot-r"></div>
+                <div class="editor-dot dot-y"></div>
+                <div class="editor-dot dot-g"></div>
+              </div>
+              <span class="editor-lang">HTML / JavaScript / Python</span>
+            </div>
+            <textarea class="editor-textarea" id="codeInput" placeholder="<!-- Paste your code or HTML simulation here -->&#10;<!-- Generated with AI assistance during the workshop -->&#10;&#10;Example:&#10;&lt;canvas id=&quot;pendulum&quot;&gt;&lt;/canvas&gt;&#10;&lt;script&gt;&#10;  // Torsional pendulum physics simulation&#10;  const theta0 = 0.5; // initial angle (radians)&#10;  const omega = 2.5;  // angular frequency&#10;  function simulate(t) {&#10;    return theta0 * Math.cos(omega * t);&#10;  }&#10;&lt;/script&gt;"></textarea>
+          </div>
+          <button class="submit-btn" onclick="submitToFacilitator()">⬆ Submit to Facilitator Dashboard</button>
+        </div>
+      </div>
+
+      <!-- Gallery (participant-side, revealed when facilitator enables) -->
+      <div class="card" id="parGalleryCard" style="display:none">
+        <div class="card-header">
+          <span class="card-title">🎓 Peer Submission Gallery</span>
+          <span class="badge badge-green">LIVE</span>
+        </div>
+        <div class="gallery-wall" id="parGalleryWall"></div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ===== SIMULATION PREVIEW MODAL ===== -->
+<div class="modal-overlay" id="previewModal" style="display:none" onclick="if(event.target===this)closeModal()">
+  <div class="modal-box">
+    <div class="modal-header">
+      <div><div class="modal-title" id="modalTitle">Simulation Preview</div>
+        <div class="modal-subtitle" id="modalSubtitle">Sandboxed execution</div></div>
+      <button class="modal-close" onclick="closeModal()">&#x2715;</button>
+    </div>
+    <div class="modal-body">
+      <div class="modal-notice">Running participant HTML/JS in a sandboxed iframe.</div>
+      <div style="font-family:var(--font-mono);font-size:0.72rem;color:#0f766e;background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:10px;max-height:140px;overflow-y:auto;white-space:pre-wrap" id="modalCode"></div>
+      <div class="modal-iframe-wrap"><iframe id="previewIframe" class="modal-iframe" sandbox="allow-scripts"></iframe></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== SESSION SCRIPT MODAL ===== -->
+<div class="modal-overlay" id="scriptModal" style="display:none" onclick="if(event.target===this)closeScriptModal()">
+  <div class="modal-box" style="max-width:760px">
+    <div class="modal-header">
+      <div><div class="modal-title" id="scriptModalTitle">Session Script</div>
+        <div class="modal-subtitle" id="scriptModalSub">Facilitator Use</div></div>
+      <button class="modal-close" onclick="closeScriptModal()">&#x2715;</button>
+    </div>
+    <div class="modal-body">
+      <div class="modal-notice">This script is a scaffold — adapt freely to your room.</div>
+      <div id="scriptModalContent" style="line-height:1.75;font-size:0.82rem;color:var(--text);white-space:pre-wrap;background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius2);padding:16px;min-height:200px;max-height:60vh;overflow-y:auto"></div>
+    </div>
+  </div>
+</div>
+
+
+<script>
+// ============================================================
+// SUPABASE REALTIME ENGINE
+// ============================================================
+let supabase = null;
+let PARTICIPANT_NAME = 'Participant';
+
+function getSetup() {
+  return {
+    url:  localStorage.getItem('aikep_sb_url')  || '',
+    key:  localStorage.getItem('aikep_sb_key')  || '',
+    name: localStorage.getItem('aikep_sb_name') || ''
+  };
+}
+
+function showSetup() {
+  var s = getSetup();
+  document.getElementById('setupUrl').value  = s.url;
+  document.getElementById('setupKey').value  = s.key;
+  document.getElementById('setupName').value = s.name;
+  document.getElementById('setupModal').style.display = 'flex';
+}
+
+async function saveSetup() {
+  var url  = document.getElementById('setupUrl').value.trim();
+  var key  = document.getElementById('setupKey').value.trim();
+  var name = document.getElementById('setupName').value.trim() || 'Participant';
+  var err  = document.getElementById('setupError');
+  err.style.display = 'none';
+  if (!url || !key) { err.textContent = 'Both URL and Anon Key are required.'; err.style.display = 'block'; return; }
+  localStorage.setItem('aikep_sb_url', url);
+  localStorage.setItem('aikep_sb_key', key);
+  localStorage.setItem('aikep_sb_name', name);
+  PARTICIPANT_NAME = name;
+  document.getElementById('setupModal').style.display = 'none';
+  await initSupabase(url, key);
+}
+
+function setConnStatus(online) {
+  var dot = document.getElementById('connDot');
+  var lbl = document.getElementById('connLabel');
+  if (online) {
+    dot.style.background = 'var(--accent3)';
+    dot.style.animation  = 'blink 2s infinite';
+    lbl.textContent = 'Live';
+    lbl.style.color = 'var(--accent3)';
+  } else {
+    dot.style.background = 'var(--danger)';
+    dot.style.animation  = 'none';
+    lbl.textContent = 'Offline';
+    lbl.style.color = 'var(--text3)';
+  }
+}
+
+async function initSupabase(url, key) {
+  try {
+    supabase = window.supabase.createClient(url, key);
+    var test = await supabase.from('room_state').select('key').limit(1);
+    if (test.error && test.error.code !== 'PGRST116') throw test.error;
+    setConnStatus(true);
+    await loadRoomState();
+    subscribeRealtime();
+    showToast('Connected to Supabase — live sync active');
+  } catch(e) {
+    setConnStatus(false);
+    showToast('Supabase connection failed: ' + e.message, true);
+  }
+}
+
+async function loadRoomState() {
+  if (!supabase) return;
+  var res = await supabase.from('room_state').select('key,value');
+  if (res.data) res.data.forEach(function(row){ applyRoomState(row.key, row.value); });
+  var subRes = await supabase.from('submissions').select('*').order('created_at', { ascending: false });
+  if (subRes.data && subRes.data.length) {
+    STATE.submissions = subRes.data.map(function(r){
+      return { author: r.author, title: r.title, code: r.code,
+        time: new Date(r.created_at).toLocaleTimeString('en-IN', { hour:'2-digit', minute:'2-digit' }) };
+    });
+    renderSubmissionFeed();
+    if (STATE.galleryRevealed) { renderGallery(); renderParGallery(); }
+  }
+}
+
+function applyRoomState(key, value) {
+  if (key === 'current_session') {
+    var idx = parseInt(value);
+    STATE.currentSession = idx;
+    rebuildSessionStatuses(idx);
+    renderSessionBtns();
+    renderTimeline();
+    renderStaticScript(idx);
+    document.getElementById('currentSessionLabel').textContent = 'Session ' + (idx+1) + ' - ' + SESSIONS[idx].label;
+  }
+  if (key === 'gallery_revealed') {
+    var on = value === 'true' || value === true;
+    STATE.galleryRevealed = on;
+    document.getElementById('galleryToggle').checked = on;
+    applyGalleryState(on);
+  }
+}
+
+function subscribeRealtime() {
+  if (!supabase) return;
+  var channel = supabase.channel('aikep-room');
+  channel.on('postgres_changes', { event: '*', schema: 'public', table: 'room_state' }, function(payload){
+    if (payload.new) applyRoomState(payload.new.key, payload.new.value);
+  });
+  channel.on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'submissions' }, function(payload){
+    var r = payload.new;
+    var sub = { author: r.author, title: r.title, code: r.code,
+      time: new Date(r.created_at).toLocaleTimeString('en-IN', { hour:'2-digit', minute:'2-digit' }) };
+    var exists = STATE.submissions.some(function(s){ return s.title === sub.title && s.author === sub.author; });
+    if (!exists) {
+      STATE.submissions.unshift(sub);
+      renderSubmissionFeed();
+      if (STATE.galleryRevealed) { renderGallery(); renderParGallery(); }
+      document.getElementById('statSubs').textContent = STATE.submissions.length;
+      document.getElementById('subCount').textContent = STATE.submissions.length + ' items';
+      showToast('New submission from ' + sub.author + ': ' + sub.title);
+    }
+  });
+  channel.subscribe(function(status){
+    if (status === 'SUBSCRIBED') setConnStatus(true);
+    if (status === 'CLOSED' || status === 'CHANNEL_ERROR') setConnStatus(false);
+  });
+}
+
+async function sbSetRoomState(key, value) {
+  if (!supabase) return;
+  await supabase.from('room_state').upsert({ key: key, value: String(value) }, { onConflict: 'key' });
+}
+
+async function sbInsertSubmission(sub) {
+  if (!supabase) return;
+  var res = await supabase.from('submissions').insert({ author: sub.author, title: sub.title, code: sub.code });
+  if (res.error) console.error('Submission error:', res.error);
+}
+
+// ============================================================
+// STATE
+// ============================================================
+var STATE = {
+  currentSession: 1,
+  galleryRevealed: false,
+  activeLang: 'en',
+  submissions: [],
+  pollData: [
+    { label: 'Socratic Method Mastery', val: 78 },
+    { label: 'AI Prompting Confidence', val: 62 },
+    { label: 'LLM Tool Usage',          val: 55 },
+    { label: 'Simulation Generation',   val: 41 },
+    { label: 'Vernacular Integration',  val: 83 }
+  ],
+  participants: [
+    { name: 'Arjun Sharma',   status: 'online', activity: 'Submitting simulation',     score: 4 },
+    { name: 'Priya Nair',     status: 'online', activity: 'Socratic sandbox active',   score: 3 },
+    { name: 'Rahul Verma',    status: 'online', activity: 'Completed Module 2',        score: 5 },
+    { name: 'Divya Kulkarni', status: 'idle',   activity: 'Reviewing timeline',        score: 2 },
+    { name: 'Karthik Iyer',   status: 'online', activity: 'Torsional Pendulum Sim',    score: 4 },
+    { name: 'Sneha Patil',    status: 'online', activity: 'Vernacular bridge: Hindi',  score: 3 },
+    { name: 'Mohammed Rafi',  status: 'online', activity: 'LLM prompting task',        score: 4 },
+    { name: 'Aishwarya Das',  status: 'idle',   activity: 'Listening',                 score: 1 },
+    { name: 'Vijay Kumar',    status: 'online', activity: 'Code submission sent',      score: 5 },
+    { name: 'Tanvi Mehta',    status: 'online', activity: 'Socratic sandbox active',   score: 3 },
+    { name: 'Ravi Shankar',   status: 'online', activity: 'Fourier Series task',       score: 4 },
+    { name: 'Lakshmi Rao',    status: 'idle',   activity: 'Just joined',               score: 1 }
+  ]
+};
+
+var SESSIONS = [
+  { day:1, label:'Introduction to AI in Education',   duration:'9:00 - 10:30 AM',  status:'done' },
+  { day:1, label:'Socratic Prompting & LLM Basics',   duration:'10:45 - 12:30 PM', status:'active' },
+  { day:1, label:'AI Tool Exploration Lab',           duration:'1:30 - 3:00 PM',   status:'upcoming' },
+  { day:1, label:'Peer Review & Reflection',          duration:'3:15 - 4:30 PM',   status:'upcoming' },
+  { day:2, label:'Simulation Design with AI',         duration:'9:00 - 11:00 AM',  status:'upcoming' },
+  { day:2, label:'Vernacular Bridge Workshop',        duration:'11:15 - 12:30 PM', status:'upcoming' },
+  { day:2, label:'Project Gallery & Presentations',   duration:'1:30 - 3:30 PM',   status:'upcoming' },
+  { day:2, label:'Programme Closure & Awards',        duration:'3:30 - 4:30 PM',   status:'upcoming' }
+];
+
+var MOCK_SUBS = [
+  { author:'Vijay Kumar',  title:'Torsional Pendulum Simulation', time:'10:52 AM', code:'<!DOCTYPE html><html><body style="margin:0;background:#0a0a1a;display:flex;align-items:center;justify-content:center;height:100vh"><canvas id="c" width="320" height="240"></canvas><script>var cv=document.getElementById("c"),ctx=cv.getContext("2d"),th=0.5,om=2.5,t=0;function draw(){ctx.fillStyle="rgba(10,10,26,0.18)";ctx.fillRect(0,0,320,240);var cx=160,cy=40,L=140,x=cx+L*Math.sin(th*Math.cos(om*t)),y=cy+L*Math.cos(th*Math.cos(om*t));ctx.strokeStyle="#4ade80";ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(x,y);ctx.stroke();ctx.fillStyle="#22d3ee";ctx.beginPath();ctx.arc(x,y,14,0,Math.PI*2);ctx.fill();t+=0.018;requestAnimationFrame(draw);}draw();<\/script></body></html>' },
+  { author:'Karthik Iyer', title:'Beam Deflection Calculator',    time:'11:08 AM', code:'<!DOCTYPE html><html><body style="font-family:monospace;background:#f0fdf4;padding:20px"><h3 style="color:#065f46">Beam Deflection</h3><label>P (N):<input id="P" value="500"></label><br><label>L (m):<input id="L" value="2"></label><br><button onclick="var P=+document.getElementById(\'P\').value,L=+document.getElementById(\'L\').value;document.getElementById(\'out\').innerHTML=\'delta = \'+(P*Math.pow(L,3)/(3*200e9*8.33e-6)*1000).toFixed(4)+\' mm\'" style="margin-top:8px;padding:6px 14px;background:#059669;color:#fff;border:none;border-radius:6px;cursor:pointer">Calculate</button><div id="out" style="margin-top:12px;font-size:1.1rem;color:#065f46"></div></body></html>' },
+  { author:'Priya Nair',   title:'Socratic Prompt Chain',         time:'11:14 AM', code:'# Socratic Prompt Chain\nQ1 = "What happens when current doubles?"\nQ2 = "Why does resistance oppose current?"\nQ3 = "Where does Ohm\'s Law break down?"' },
+  { author:'Rahul Verma',  title:'RC Circuit Transient Response', time:'11:19 AM', code:'<!DOCTYPE html><html><body style="background:#fff0f9;padding:20px"><canvas id="c" width="400" height="200" style="border:1px solid #ddd;border-radius:8px"></canvas><script>var cv=document.getElementById("c"),ctx=cv.getContext("2d"),R=1000,C=100e-6,Vs=5;ctx.strokeStyle="#9333ea";ctx.lineWidth=2;ctx.beginPath();for(var i=0;i<400;i++){var tt=i*(5*R*C/400),V=Vs*(1-Math.exp(-tt/(R*C))),x=i,y=200-(V/Vs)*180;i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);}ctx.stroke();<\/script></body></html>' },
+  { author:'Arjun Sharma', title:'Bernoulli Visualizer',          time:'11:23 AM', code:'<!DOCTYPE html><html><body style="background:#eff6ff;padding:20px"><svg width="380" height="140"><path d="M20,40 Q100,20 180,40 L180,100 Q100,120 20,100 Z" fill="#93c5fd" opacity="0.7"/><path d="M180,50 Q280,30 360,65 L360,100 Q280,115 180,90 Z" fill="#3b82f6" opacity="0.7"/></svg><p style="color:#1d4ed8;font-size:13px;font-family:monospace">P + half*rho*v^2 + rho*g*h = const</p></body></html>' },
+  { author:'Sneha Patil',  title:'Hindi Concept Bridge',          time:'11:31 AM', code:'# Resistance = Pratirodhh (Hindi)\n# V = I * R (Ohm\'s Law)\nR, I = 47, 0.22\nV = I * R\nprint(f"Voltage = {V:.2f} V")' },
+  { author:'Ravi Shankar', title:'Fourier Series Animation',      time:'11:37 AM', code:'<!DOCTYPE html><html><body style="background:#fff7ed;padding:20px"><canvas id="c" width="400" height="180"></canvas><script>var cv=document.getElementById("c"),ctx=cv.getContext("2d");function sq(x,n){var s=0;for(var k=0;k<n;k++){var m=2*k+1;s+=Math.sin(m*x)/m;}return s*(4/Math.PI);}[[9,"#f97316"],[3,"#ea580c"],[1,"#9a3412"]].forEach(function(p){ctx.strokeStyle=p[1];ctx.lineWidth=1.5;ctx.beginPath();for(var i=0;i<400;i++){var x=i*(4*Math.PI/400)-2*Math.PI,y=90-sq(x,p[0])*70;i===0?ctx.moveTo(i,y):ctx.lineTo(i,y);}ctx.stroke();});<\/script></body></html>' }
+];
+
+// ============================================================
+// STATIC SESSION SCRIPTS
+// ============================================================
+var SESSION_SCRIPTS = [
+  { sections:[
+    {title:"1. OPENING HOOK", body:"Ask the room: 'Show of hands — how many of you used a search engine to prepare for today?' Pause. 'Now, how many of you asked an AI?' Share this: ChatGPT crossed 100 million users in 60 days — faster than Instagram. 'Today we are not here to debate AI. We are here to figure out how to lead it in our classrooms.'"},
+    {title:"2. SESSION OBJECTIVES", body:"By the end participants will: Define AI-driven pedagogy and distinguish it from technology-enhanced teaching. Identify three points in their course where AI can be embedded. Articulate AI as a thinking scaffold, not a shortcut. Reflect on their own comfort level and name one barrier."},
+    {title:"3. CORE CONTENT WALKTHROUGH", body:"Present the AI Literacy Stack for Educators:\n  Layer 1 - Awareness: What AI tools exist.\n  Layer 2 - Discernment: When AI helps vs bypasses learning.\n  Layer 3 - Design: Structuring tasks so AI is a collaborator.\n\nThree AI roles in engineering classrooms:\n  Tutor (Socratic dialogue), Simulation Engine (physics models), Vernacular Bridge (regional language access).\n\nLive demo: open the Socratic Tutor sandbox on the projector. Type a question about a torsional pendulum and show how the AI responds with questions, not answers."},
+    {title:"4. PARTICIPANT ACTIVITY", body:"Each participant opens the Participant Workspace. Types: 'I want to understand why a torsional pendulum returns to equilibrium.' Allow 5 minutes. Ask two volunteers: 'What did the AI ask back? Did it answer your question or redirect it?'"},
+    {title:"5. DISCUSSION PROMPTS", body:"'Think of a topic students consistently struggle with. Could an AI tutor help — and at what point in the learning sequence?'\n'What is the difference between a student using AI to complete an assignment versus understand a concept?'\n'If AI generates a Bernoulli simulation in seconds, what is the new value-add of the faculty member?'"},
+    {title:"6. ENGINEERING CONTEXT BRIDGES", body:"Mechanical: AI-generated torsional and beam simulations give visual feedback static diagrams cannot.\nElectronics: LLMs walk students through Ohm's Law with adaptive difficulty.\nCivil: Structural analysis concepts explored through AI-generated constraint problems."},
+    {title:"7. CLOSING SYNTHESIS", body:"'We have just seen AI as infrastructure — like the calculator in the 1980s. The question is never whether students will use it. The question is whether we design learning experiences sophisticated enough that using AI well requires genuine understanding.' Preview Session 2: Socratic questioning and prompt engineering."},
+    {title:"8. FACILITATOR TIPS", body:"Expect 2-3 participants concerned about academic integrity. Park the concern on a board and promise to address it in Session 4. Have a 2-minute screen-recorded fallback demo if internet fails. Session 1 energy: be curious and exploratory, not evangelical."}
+  ]},
+  { sections:[
+    {title:"1. OPENING HOOK", body:"Ask: 'What is the worst question a student has ever asked you?' Collect 2-3 answers. Then: 'Now — what is the BEST question a student asked? The one that made you stop and think?' Pause. 'That second question is a Socratic question. Today we teach AI to ask those questions, and teach ourselves to ask them better.'"},
+    {title:"2. SESSION OBJECTIVES", body:"By the end participants will: Explain the Socratic method in engineering education. Write a multi-turn prompt chain guiding AI to ask progressively deeper questions. Distinguish surface-level from boundary-condition questions. Use the Vernacular Bridge for bilingual dialogue."},
+    {title:"3. CORE CONTENT WALKTHROUGH", body:"Four levels of Socratic questioning:\n  Level 1 - Recall: 'What is Ohm's Law?'\n  Level 2 - Explanation: 'Why does resistance increase with temperature?'\n  Level 3 - Boundary Condition: 'At what temperature does the linear model break down?'\n  Level 4 - Transfer: 'How does this change in a superconductor near absolute zero?'\n\nDemo prompt engineering: write a system prompt instructing the LLM to respond only with Socratic questions. Show the Vernacular Bridge live — switch to Hindi and show 'restoring torque' appearing bilingual."},
+    {title:"4. PARTICIPANT ACTIVITY", body:"12 minutes:\n  Step 1: Choose a core concept from your course.\n  Step 2: Write a 3-turn Socratic chain escalating from recall to boundary condition.\n  Step 3: Toggle the Vernacular Bridge and observe how AI adapts.\n  Step 4: Submit via the Submission Module titled 'My Socratic Chain - [Topic]'."},
+    {title:"5. DISCUSSION PROMPTS", body:"'When does a Socratic question become frustrating rather than illuminating? How do you calibrate it for first-year vs final-year students?'\n'The AI never gives a direct answer. Is that pedagogically responsible? When should a teacher break the Socratic pattern?'\n'How could you use the Vernacular Bridge in your own explanations, not just AI tools?'"},
+    {title:"6. ENGINEERING CONTEXT BRIDGES", body:"CS: Prompt engineering is itself an engineering discipline. Writing a system prompt is analogous to writing a specification document.\nElectrical: Feedback loops map directly onto Socratic dialogue — each question is a probe signal, the student's response is the output.\nMechanical: Boundary condition analysis is the verbal equivalent of stress-testing a design."},
+    {title:"7. CLOSING SYNTHESIS", body:"'You have used AI to become a better questioner, not to get faster answers. The Socratic method is 2,500 years old. Prompt engineering is 5 years old. Together they may be the most powerful pedagogical combination available right now.' Preview Session 3: AI-assisted simulation building."},
+    {title:"8. FACILITATOR TIPS", body:"Celebrate basic prompt chains and then model a Level 3 boundary-condition question live to raise the bar. The Vernacular Bridge works best when participants choose the language they actually use with their students. Watch the clock — the activity tends to expand."}
+  ]},
+  { sections:[
+    {title:"1. OPENING HOOK", body:"Open your laptop silently. Navigate to Participant Workspace. Type 'Torsional Pendulum Simulation' in the submission module. Hit submit. It appears on the facilitator dashboard. Turn to the room: 'I just created and published a physics simulation in 30 seconds. This session is about what you can do with that capability today.'"},
+    {title:"2. SESSION OBJECTIVES", body:"By the end participants will: Use an LLM to generate a working HTML/JS or Python simulation. Critically evaluate it for physical accuracy. Submit to the dashboard and articulate its teaching application. Identify one concept in their course that benefits from a generative simulation."},
+    {title:"3. CORE CONTENT WALKTHROUGH", body:"The Specify-Generate-Verify workflow:\n\nSpecify: Contrast vague ('make a pendulum') vs precise ('Create HTML5 canvas animation of torsional pendulum where theta(t)=theta_0*cos(omega*t), omega=2.5, theta_0=0.5. Display the equation on screen.').\n\nGenerate: Paste output into the code editor. Click Preview Sim to run it on the projector.\n\nVerify: 'Does this match physical reality? What assumptions is the simulation making? What does it get wrong?' AI generates, humans verify.\n\nWalk through three mock submissions using Preview Sim: Torsional Pendulum, RC Circuit, Beam Deflection."},
+    {title:"4. PARTICIPANT ACTIVITY", body:"20-minute sprint:\n  Step 1: Choose a concept with motion, flow, or spatial geometry.\n  Step 2: Write a precise specification and paste into an LLM.\n  Step 3: Copy the code into the submission module.\n  Step 4: Submit to the facilitator dashboard.\n  Step 5: Facilitator opens 3-4 submissions live. Class evaluates each."},
+    {title:"5. DISCUSSION PROMPTS", body:"'When a student submits an AI-generated simulation, what are you assessing — physics understanding, specification ability, or verification skill? Are these different?'\n'The simulation assumes no damping. Is discovering that gap more valuable than a textbook explanation of damping?'\n'Could you replace your next lab session with an AI-generated simulation? What is lost? What is gained?'"},
+    {title:"6. ENGINEERING CONTEXT BRIDGES", body:"Civil: Beam deflection visualisers with adjustable load and cross-section. Students explore how I affects deflection in real time.\nElectronics: RC transient response curves animated in HTML5 canvas — intuition for time constants before the oscilloscope.\nFluid: Bernoulli visualisations with adjustable pipe geometry."},
+    {title:"7. CLOSING SYNTHESIS", body:"'Every simulation today was generated in minutes, verified by engineers, and is ready for classroom use. The bottleneck is no longer production — it is your pedagogical judgement about what to build.' Evening challenge: generate one simulation for your next scheduled class. Preview Day 2."},
+    {title:"8. FACILITATOR TIPS", body:"Non-coders: reassure them they do not need to understand the code, only verify the physics. That is the skill. Have 3 backup prompts: spring-mass system, RLC resonance, projectile trajectory. Keep facilitator view on projector throughout — Preview Sim is the showpiece."}
+  ]},
+  { sections:[
+    {title:"1. OPENING HOOK", body:"Say nothing. Toggle Gallery Reveal ON. Watch participants see all submissions appear simultaneously. 60 seconds of silence. Then: 'What you just experienced is peer learning made instantaneous. No waiting for printed reports. Reflection is only useful when grounded in something real. Today the real thing is your own work.'"},
+    {title:"2. SESSION OBJECTIVES", body:"By the end participants will: Conduct structured peer review using a three-point rubric. Distinguish evaluating AI output from evaluating student understanding. Identify one course change from today's learning. Draft an AI Integration Statement for their course outline."},
+    {title:"3. CORE CONTENT WALKTHROUGH", body:"Peer Review Rubric (display on projector):\n  Criterion 1 - Accuracy: Does the simulation correctly represent the engineering principle?\n  Criterion 2 - Pedagogical Intent: How would this be used? What learning outcome does it serve?\n  Criterion 3 - AI Transparency: What did the AI generate vs what did the faculty member design and verify?\n\nWalk through one gallery submission together applying all three criteria. Model constructive feedback language.\n\nAddress academic integrity directly: 'If your rubric rewards the product, AI wins. If your rubric rewards the reasoning, AI becomes a tool, not a replacement.'"},
+    {title:"4. PARTICIPANT ACTIVITY", body:"Pairs review (15 min):\n  Step 1: Select one gallery submission that is not yours.\n  Step 2: Apply the three-point rubric. Write 2-3 sentences of Socratic feedback.\n  Step 3: Share one insight aloud — 1 minute each.\n\nIndividual (5 min): Write your AI Integration Statement — one paragraph on how you will use AI in one session of your next course."},
+    {title:"5. DISCUSSION PROMPTS", body:"'When you reviewed a peer's simulation, what surprised you most — the quality of the AI output or the quality of the human framing around it?'\n'Should students document which parts of their submission were AI-generated? What are the practical implications?'\n'If you redesigned your next exam with AI access allowed, what would the question look like?'"},
+    {title:"6. ENGINEERING CONTEXT BRIDGES", body:"Design Review Culture: Every engineering design goes through peer review before fabrication. AI simulation peer review is the same discipline applied to pedagogy.\nCode Review: Modern software teams review code to transfer knowledge, not just catch bugs. Peer review here serves the same function.\nQuality Assurance: Verification and Validation (V&V) are foundational to engineering. Today's rubric is the pedagogical equivalent."},
+    {title:"7. CLOSING SYNTHESIS", body:"'You arrived curious about AI. You leave having built AI-assisted simulations, practised Socratic prompt engineering, reviewed peers, and written an integration plan. That is not exploration — it is implementation.' Homework: refine the AI Integration Statement. Preview Day 2."},
+    {title:"8. FACILITATOR TIPS", body:"The academic integrity discussion can run long — time-box to 8 minutes and redirect to assessment design rather than policing. Celebrate Integration Statements by asking 3-4 people to read theirs aloud. End Day 1 on time."}
+  ]},
+  { sections:[
+    {title:"1. OPENING HOOK", body:"'Last night, how many of you tried to build the simulation you promised yourself?' Show of hands. 'Perfect — whether you did or did not, today we make it real.' Generate a spring-mass damper simulation live in 90 seconds from one LLM prompt. The room watches it animate. 'That is what we are doing at scale — not one simulation, but a library built by this room, for your students.'"},
+    {title:"2. SESSION OBJECTIVES", body:"By the end participants will: Design a complete AI-assisted simulation with accurate physics and pedagogical scaffolding. Apply iterative prompt refinement across 2-3 generations. Identify common AI simulation failure modes and correct them. Publish a simulation to the shared gallery."},
+    {title:"3. CORE CONTENT WALKTHROUGH", body:"Iterative Simulation Design Workflow:\n\n  Round 1 - First generation: Full physics specification. Generate, paste, preview.\n  Round 2 - Diagnosis: What is wrong? Is the equation correct? Units consistent? Animation physically intuitive?\n  Round 3 - Refinement: Feed diagnosis back. 'Add a damping term b*d(theta)/dt and show amplitude decaying exponentially.' Generate again. Compare.\n\nDemo live with torsional pendulum: undamped, then critically damped, then overdamped. Show adding interactive sliders for omega, theta_0, and damping b."},
+    {title:"4. PARTICIPANT ACTIVITY", body:"30-minute design sprint:\n  Step 1: Select a concept involving a differential equation, conservation law, or geometry.\n  Step 2: Write Round 1 specification. Generate, paste, preview.\n  Step 3: Diagnose output. Write one correction. Run Round 2.\n  Step 4: Add one interactive element (slider or button).\n  Step 5: Submit to facilitator dashboard.\n\nFacilitator opens 5 most distinctive submissions. Class discusses: 'What did AI get right without being told? What did it consistently miss?'"},
+    {title:"5. DISCUSSION PROMPTS", body:"'In Round 2 refinement you had to diagnose what was wrong. That required deep subject knowledge. Is this workflow raising the expertise bar, not lowering it?'\n'A student submits a simulation with a sign error in the restoring force. The pendulum diverges. How do you assess that? What did they demonstrate?'\n'If AI generates any simulation from a specification, the most valuable skill is writing the specification. How does that change what you teach in first-year courses?'"},
+    {title:"6. ENGINEERING CONTEXT BRIDGES", body:"Control Systems: Root locus plots and step response curves for second-order systems. Students adjust damping ratio and see stability boundaries in real time.\nThermodynamics: Heat transfer through composite walls with adjustable thermal conductivity.\nStructural: Mode shapes for a simply-supported beam. Students add point loads and observe deflection dynamically."},
+    {title:"7. CLOSING SYNTHESIS", body:"'Look at what this room built in 30 minutes — simulations spanning Mechanical, Electrical, Civil, and CS. A team of instructional designers would need three months. That is not incremental improvement — it is structural change.' Preview Session 6: language bridges and vernacular integration."},
+    {title:"8. FACILITATOR TIPS", body:"Protect the 30-minute sprint fiercely from walkthrough overruns. Circulate and identify the 5-6 most interesting or problematic outputs before the debrief — curation is your highest-value contribution. Fast finishers: add a second simulation comparing two physical scenarios."}
+  ]},
+  { sections:[
+    {title:"1. OPENING HOOK", body:"'Close your eyes. Think of the moment you first truly understood a concept in engineering — not memorised, but understood.' Ask two people to describe that moment. It almost always involves an analogy, a demonstration, or a translation between abstract and concrete. 'That moment of translation is what the Vernacular Bridge creates — systematically, for every student, in the language they think most clearly in.'"},
+    {title:"2. SESSION OBJECTIVES", body:"By the end participants will: Design a bilingual AI prompt for engineering concept explanation with regional language key terms. Use the Vernacular Bridge for a classroom activity accessible to students with varying English fluency. Articulate the pedagogical argument for vernacular integration. Create one bilingual concept card ready for classroom use."},
+    {title:"3. CORE CONTENT WALKTHROUGH", body:"Three levels of vernacular integration:\n  Level 1 - Glossary: Key terms translated. ('Resistance = Pratirodhh')\n  Level 2 - Explanation: Concept explained using local cultural analogies. ('Think of current like water in a village irrigation channel — resistance is the narrowing.')\n  Level 3 - Dialogue: The Socratic tutor conducts reasoning in the learner's preferred language, switching to English only for technical notation.\n\nDemo all three levels using the Vernacular Bridge toggle. Switch between Kannada, Hindi, and Marathi. Show how mathematical precision is maintained across languages."},
+    {title:"4. PARTICIPANT ACTIVITY", body:"Bilingual Concept Card Workshop (20 min):\n  Step 1: Select one core concept from your course.\n  Step 2: Conduct a 4-turn dialogue in the Socratic Tutor with Vernacular Bridge enabled.\n  Step 3: Extract (a) English explanation, (b) 5 key terms with translations, (c) one local analogy.\n  Step 4: Submit as a Concept Card via the submission module.\n  Step 5: Facilitator reveals gallery. Class votes on most memorable analogy using the poll."},
+    {title:"5. DISCUSSION PROMPTS", body:"'When AI translates a concept into a regional language, who is responsible for accuracy — the AI, the teacher, or the institution? What quality control would you put in place?'\n'Is there a risk that vernacular-first explanation lowers English fluency expectations? How do you balance the two?'\n'The AI used an irrigation channel analogy for current flow. Was it accurate? Where might it mislead a student?'"},
+    {title:"6. ENGINEERING CONTEXT BRIDGES", body:"Rural Infrastructure: Civil engineers communicating technical specs to village panchayats need vernacular technical communication — it is a professional skill.\nManufacturing: Safety protocols in regional languages reduce industrial accidents. Graduates who communicate bilingually are more valuable.\nAgriculture Tech: IoT sensor systems deployed in agricultural contexts need vernacular-first interfaces. Students who understand this design better products."},
+    {title:"7. CLOSING SYNTHESIS", body:"'Every concept card you created is a bridge — between the language your students inherited and the language your discipline requires. That bridge is not a concession to lower standards. It is a higher-order pedagogical act.' Preview Session 7: Gallery presentations and the full integration plan."},
+    {title:"8. FACILITATOR TIPS", body:"Invite participants to share the cultural analogies the AI generated — these are often surprising and build energy. Watch for reluctance to use regional languages due to institutional pressure. Frame it as additive, not subtractive. The poll widget is perfect for this session."}
+  ]},
+  { sections:[
+    {title:"1. OPENING HOOK", body:"No words. Toggle Gallery Reveal ON. Let participants see two days of accumulated work — simulations, Socratic chains, concept cards, bilingual glossaries — displayed simultaneously. 60 seconds of silent scrolling. 'What you are looking at is not workshop outputs. It is a prototype of what an AI-enhanced engineering curriculum looks like — built in two days, by this room, for your students.'"},
+    {title:"2. SESSION OBJECTIVES", body:"By the end participants will: Present one AI-assisted artefact and articulate its pedagogical rationale in under 3 minutes. Provide and receive structured feedback. Synthesise two days of learning into a coherent AI Teaching Integration Plan. Identify one next action to take within 7 days."},
+    {title:"3. CORE CONTENT WALKTHROUGH", body:"Two anchors before presentations:\n\nAnchor 1 - Portfolio Mindset: 'What you built is the beginning of a teaching portfolio — a curated set of AI-enhanced resources representing your pedagogical philosophy. The discipline is in the curation.'\n\nAnchor 2 - The Four-Element Integration Plan:\n  Element 1: The Concept — which topic?\n  Element 2: The Artefact — simulation, Socratic chain, or concept card?\n  Element 3: Deployment Point — before class, during lecture, in tutorial, or in assessment?\n  Element 4: Assessment Adaptation — how does your rubric change?\n\nModel one example integration plan using your own teaching context."},
+    {title:"4. PARTICIPANT ACTIVITY", body:"Gallery Presentation Rotation (35 min):\n  Each participant gets 2.5 minutes:\n    (a) Open their best submission on the projector.\n    (b) State concept, artefact type, and deployment point.\n    (c) Receive one Socratic question from the room.\n\nFacilitator uses the Add Point button to award engagement stars in real time.\n\nFinal 10 minutes: each participant writes their 4-element Integration Plan. Three volunteers share aloud."},
+    {title:"5. DISCUSSION PROMPTS", body:"'What surprised you most about what your peers built? What does that tell you about the range of AI applications in engineering education?'\n'Your integration plan has a deployment point. What preparation does a student need before their first AI-assisted learning activity?'\n'If you showed a student the simulation you built and asked them to improve it, what would they need to know?'"},
+    {title:"6. ENGINEERING CONTEXT BRIDGES", body:"Design-Build-Test Cycle: This programme was a compressed engineering design cycle — identify problem, design solutions, build, test, iterate. The process is the lesson.\nSystems Thinking: An AI-integrated course is a system. Changes to assessment propagate through everything. Design the whole.\nEngineering Communication: Every presentation today is engineering communication — translating a technical artefact into a clear audience-appropriate explanation."},
+    {title:"7. CLOSING SYNTHESIS", body:"'Two days ago you were curious about AI. You leave having built tools, challenged assumptions, bridged languages, and designed learning experiences. That transition is irreversible.' 7-day challenge: deploy one artefact in an actual class and message the group when you do. The real experiment begins now."},
+    {title:"8. FACILITATOR TIPS", body:"Keep presentations to exactly 2.5 minutes — use a visible timer. Equity of airtime models the discipline you want participants to carry back. Use Add Point generously and visibly. Do not skip the written Integration Plan — it converts inspiration into commitment."}
+  ]},
+  { sections:[
+    {title:"1. OPENING HOOK", body:"'Before we close, I want to acknowledge something. Every person here showed up and chose to engage seriously with a technology that is genuinely uncertain, genuinely powerful, and genuinely changing your profession. That takes intellectual courage.' Pause. 'This final session is a commitment ceremony — to your students, your practice, and each other.'"},
+    {title:"2. SESSION OBJECTIVES", body:"By the end participants will: Articulate a personal vision for AI-integrated teaching in one sentence. Identify a peer accountability partner for the 30-day follow-up. Give and receive recognition for specific contributions. Leave with a concrete, dated, public next action."},
+    {title:"3. CORE CONTENT WALKTHROUGH", body:"Three short anchors:\n\nAnchor 1 - The Long Arc: 'Every major shift in engineering education — slide rule, calculator, computer, internet, LMS — was resisted, then accommodated, then integrated, then invisible. AI is on that arc. The question is how quickly, and with whose intentional design. You are now part of the group that designs it.'\n\nAnchor 2 - The Responsibility Frame: 'AI in the classroom is not neutral. Simulations encode assumptions. Socratic prompts shape thinking. Language bridges can include or exclude. Your pedagogical judgement is not less important in an AI classroom — it is more important.'\n\nAnchor 3 - Community of Practice: 'What happens after you leave determines whether this was a workshop or a transformation. Regular sharing, honest feedback, collective refinement — that is what turns individual learning into institutional change.'"},
+    {title:"4. PARTICIPANT ACTIVITY", body:"Closing Ceremony (30 min):\n\n  Recognition Round (10 min): Nominate one person per table for a specific contribution. Award stars visibly. Participants can also nominate peers.\n\n  One-Sentence Vision (10 min): Each participant writes their AI teaching vision. 3-4 share aloud. Collect and photograph all cards.\n\n  Accountability Partners (5 min): Pair with someone from a different department. Commitment: share one classroom AI deployment update within 30 days.\n\n  Public Next Action (5 min): Each person states: 'Within 7 days, I will ___.' Record on the board."},
+    {title:"5. DISCUSSION PROMPTS", body:"'What is the one thing from these two days that most directly changes what you will do in your next class?'\n'Who in your institution most needs to see what you have built here? How will you share it?'\n'What does responsible AI integration look like in your specific context — your students, your resources, your institutional culture?'"},
+    {title:"6. ENGINEERING CONTEXT BRIDGES", body:"Project Closure: Every engineering project has a formal closure phase — documentation, lessons learned, handover. This session is the pedagogical equivalent.\nStandards and Ethics: Engineering practice is governed by codes of ethics. AI integration requires the same disciplined ethical thinking — about bias, accuracy, accessibility, and academic integrity. You are practitioners in a field without established standards. You have the opportunity to help write them.\nContinuous Improvement: The Kaizen principle — small continuous improvements by people closest to the work — applies here. Start with your own classroom. You do not need institutional permission."},
+    {title:"7. CLOSING SYNTHESIS", body:"'The best engineering education does not give students answers. It gives them the capacity to ask better questions, build better models, and revise their thinking when the model fails. You have spent two days doing exactly that. Take that same rigour back to your classrooms. Your students are waiting for it.'"},
+    {title:"8. FACILITATOR TIPS", body:"The tone is warm and unhurried. Do not rush the recognition round — it is the emotional peak of two days and participants need it. Integrate any formal certificates into the recognition round. Send a follow-up within 48 hours: gallery screenshots, one-sentence vision cards, and a 30-day check-in date. That follow-through is what separates a good workshop from a lasting programme."}
+  ]}
+];
+
+function renderStaticScript(idx) {
+  var data = SESSION_SCRIPTS[idx];
+  if (!data) return;
+  var body = document.getElementById('facScriptBody');
+  if (!body) return;
+  body.innerHTML = data.sections.map(function(sec){
+    return '<div class="script-section">'
+      + '<div class="script-section-title">' + sec.title + '</div>'
+      + '<div class="script-section-body">' + sec.body.replace(/\n/g,'<br>') + '</div>'
+      + '</div>';
+  }).join('');
+  var session = SESSIONS[idx];
+  document.getElementById('scriptModalTitle').textContent = session.label;
+  document.getElementById('scriptModalSub').textContent = 'Day ' + session.day + ' - ' + session.duration;
+  document.getElementById('scriptModalContent').textContent = data.sections.map(function(s){ return s.title + '\n\n' + s.body; }).join('\n\n---\n\n');
+}
+
+// ============================================================
+// GEMINI API
+// ============================================================
+function getApiKey() {
+  var el = document.getElementById('geminiApiKey');
+  return (el ? el.value.trim() : '') || localStorage.getItem('aikep_gemini_key') || '';
+}
+
+async function callGemini(contents, systemInstruction) {
+  var key = getApiKey();
+  if (!key) throw new Error('No Gemini API key. Paste your key in the Gemini API Key field.');
+  var body = { contents: contents, generationConfig: { temperature: 0.7, maxOutputTokens: 1024 } };
+  if (systemInstruction) body.system_instruction = { parts: [{ text: systemInstruction }] };
+  var res = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=' + key,
+    { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+  var data = await res.json();
+  if (data.error) throw new Error(data.error.message || 'Gemini API error');
+  return (data.candidates && data.candidates[0] && data.candidates[0].content &&
+    data.candidates[0].content.parts && data.candidates[0].content.parts[0].text) || '';
+}
+
+// ============================================================
+// INIT
+// ============================================================
+window.addEventListener('load', function() {
+  var params = new URLSearchParams(window.location.search);
+  var role = params.get('role') || localStorage.getItem('aikep_role') || 'facilitator';
+  localStorage.setItem('aikep_role', role);
+  switchView(role === 'participant' ? 'par' : 'fac');
+
+  var setup = getSetup();
+  PARTICIPANT_NAME = setup.name || 'Participant';
+  if (setup.url && setup.key) {
+    initSupabase(setup.url, setup.key);
+  } else {
+    showSetup();
+  }
+
+  var savedKey = localStorage.getItem('aikep_gemini_key') || '';
+  var keyEl = document.getElementById('geminiApiKey');
+  if (keyEl && savedKey) keyEl.value = savedKey;
+
+  var storedSession = localStorage.getItem('aikep_current_session');
+  if (storedSession !== null) {
+    STATE.currentSession = parseInt(storedSession);
+    rebuildSessionStatuses(STATE.currentSession);
+  }
+  var storedGallery = localStorage.getItem('aikep_gallery_revealed');
+  if (storedGallery === 'true') {
+    STATE.galleryRevealed = true;
+    var gt = document.getElementById('galleryToggle');
+    if (gt) gt.checked = true;
+  }
+
+  STATE.submissions = JSON.parse(JSON.stringify(MOCK_SUBS));
+
+  renderSessionBtns();
+  renderStaticScript(STATE.currentSession);
+  renderParticipantTable();
+  renderSubmissionFeed();
+  renderPollChart();
+  renderTimeline();
+  renderInitialChat();
+
+  if (STATE.galleryRevealed) applyGalleryState(true);
+
+  var savedTheme = localStorage.getItem('aikep_theme') || 'light';
+  applyTheme(savedTheme);
+
+  setInterval(liveTick, 5000);
+  setInterval(function() {
+    STATE.pollData = STATE.pollData.map(function(p){
+      return Object.assign({}, p, { val: Math.max(25, Math.min(95, p.val + ((Math.random()*4-2)|0))) });
+    });
+    renderPollChart();
+  }, 8000);
+});
+
+// ============================================================
+// VIEW SWITCH
+// ============================================================
+function switchView(v) {
+  document.getElementById('viewFac').classList.toggle('active', v === 'fac');
+  document.getElementById('viewPar').classList.toggle('active', v === 'par');
+  document.getElementById('tabFac').className = 'tab-btn' + (v === 'fac' ? ' active-fac' : '');
+  document.getElementById('tabPar').className = 'tab-btn' + (v === 'par' ? ' active-par' : '');
+}
+
+function toggleTheme() {
+  var cur = document.documentElement.getAttribute('data-theme');
+  applyTheme(cur === 'dark' ? 'light' : 'dark');
+}
+function applyTheme(t) {
+  document.documentElement.setAttribute('data-theme', t);
+  localStorage.setItem('aikep_theme', t);
+  var btn = document.getElementById('themeBtn');
+  if (btn) btn.textContent = t === 'dark' ? '\u2600' : '\uD83C\uDF19';
+}
+
+// ============================================================
+// SESSION CONTROL
+// ============================================================
+function rebuildSessionStatuses(idx) {
+  SESSIONS.forEach(function(s, j) {
+    s.status = j < idx ? 'done' : j === idx ? 'active' : 'upcoming';
+  });
+}
+
+function renderSessionBtns() {
+  var el = document.getElementById('sessionBtns');
+  if (!el) return;
+  el.innerHTML = SESSIONS.map(function(s, i) {
+    var n = s.day === 1 ? i+1 : i-3;
+    return '<button class="session-btn' + (STATE.currentSession===i?' active':'') + '" onclick="setSession('+i+')">'
+      + '<span class="session-num">D'+s.day+'.'+n+'</span>' + s.label + '</button>';
+  }).join('');
+}
+
+function setSession(i) {
+  STATE.currentSession = i;
+  rebuildSessionStatuses(i);
+  renderSessionBtns();
+  renderTimeline();
+  renderStaticScript(i);
+  var label = SESSIONS[i].label;
+  var el = document.getElementById('currentSessionLabel');
+  if (el) el.textContent = 'Session '+(i+1)+' - '+label;
+  localStorage.setItem('aikep_current_session', i);
+  sbSetRoomState('current_session', i);
+  showToast('Session updated: ' + label);
+}
+
+// ============================================================
+// TIMELINE
+// ============================================================
+function renderTimeline() {
+  var el = document.getElementById('participantTimeline');
+  if (!el) return;
+  el.innerHTML = SESSIONS.map(function(s, i) {
+    var badge = s.status==='done'   ? '<span class="tl-badge badge-done">Done</span>'
+               :s.status==='active' ? '<span class="tl-badge badge-live">Live Now</span>'
+               :                      '<span class="tl-badge badge-up">Upcoming</span>';
+    return '<div class="tl-item '+s.status+'">'
+      + '<div class="tl-left"><div class="tl-dot"></div>'+(i<SESSIONS.length-1?'<div class="tl-line"></div>':'')+'</div>'
+      + '<div class="tl-right"><div class="tl-session">Day '+s.day+' - '+s.duration+'</div>'
+      + '<div class="tl-title">'+s.label+'</div>'+badge+'</div></div>';
+  }).join('');
+}
+
+// ============================================================
+// PARTICIPANT TABLE
+// ============================================================
+function renderStars(score) {
+  var s='';
+  for(var k=1;k<=5;k++) s+='<span class="'+(k<=score?'star-filled':'star-empty')+'">'+(k<=score?'&#9733;':'&#9734;')+'</span>';
+  return s;
+}
+
+function addPoint(i) {
+  if (STATE.participants[i].score < 5) {
+    STATE.participants[i].score++;
+    var el = document.getElementById('stars_'+i);
+    if (el) el.innerHTML = renderStars(STATE.participants[i].score);
+    showToast('+1 point: ' + STATE.participants[i].name);
+  }
+}
+
+function renderParticipantTable() {
+  var el = document.getElementById('participantTable');
+  if (!el) return;
+  var online = STATE.participants.filter(function(p){return p.status==='online';}).length;
+  var badge = document.getElementById('onlineBadge');
+  if (badge) badge.textContent = online+' online';
+  var statEl = document.getElementById('statOnline');
+  if (statEl) statEl.textContent = online;
+  el.innerHTML = '<thead><tr><th>Name</th><th>Status</th><th>Activity</th><th>Rating</th><th>Action</th></tr></thead>'
+    + '<tbody>' + STATE.participants.map(function(p,i){
+      return '<tr><td style="font-weight:600">'+p.name+'</td>'
+        +'<td><span class="status-dot '+p.status+'"></span>'+(p.status==='online'?'Online':'Idle')+'</td>'
+        +'<td><span class="activity-tag" title="'+p.activity+'">'+p.activity+'</span></td>'
+        +'<td><span style="font-size:0.75rem" id="stars_'+i+'">'+renderStars(p.score)+'</span></td>'
+        +'<td><button class="add-pt-btn" onclick="addPoint('+i+')">&#9733; +1</button></td></tr>';
+    }).join('') + '</tbody>';
+}
+
+// ============================================================
+// SUBMISSIONS
+// ============================================================
+function escHtml(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function renderSubmissionFeed() {
+  var el = document.getElementById('submissionFeed');
+  if (!el) return;
+  el.innerHTML = STATE.submissions.map(function(s,i){
+    return '<div class="sub-card">'
+      +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px">'
+      +'<span style="font-weight:600;font-size:0.78rem">'+s.author+'</span>'
+      +'<span style="font-family:var(--font-mono);font-size:0.62rem;color:var(--text3)">'+s.time+'</span></div>'
+      +'<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">'
+      +'<span style="font-size:0.74rem;color:var(--fac);font-weight:500">'+s.title+'</span>'
+      +'<button class="preview-btn" onclick="openPreview('+i+')">&#128065; Preview</button></div>'
+      +'<div style="font-family:var(--font-mono);font-size:0.7rem;color:var(--code-text);background:var(--bg4);border-radius:6px;padding:8px;max-height:72px;overflow-y:auto;white-space:pre-wrap;word-break:break-all;border:1px solid var(--border)">'+escHtml(s.code)+'</div>'
+      +'</div>';
+  }).join('');
+  var cnt = document.getElementById('subCount');
+  if (cnt) cnt.textContent = STATE.submissions.length+' items';
+  var stat = document.getElementById('statSubs');
+  if (stat) stat.textContent = STATE.submissions.length;
+}
+
+// ============================================================
+// PREVIEW MODAL
+// ============================================================
+function openPreview(i) {
+  var sub = STATE.submissions[i];
+  document.getElementById('modalTitle').textContent = sub.title;
+  document.getElementById('modalSubtitle').textContent = 'by '+sub.author+' - '+sub.time;
+  document.getElementById('modalCode').textContent = sub.code;
+  var iframe = document.getElementById('previewIframe');
+  var isHTML = /<!DOCTYPE|<html|<canvas|<svg|<script/i.test(sub.code);
+  iframe.srcdoc = isHTML ? sub.code
+    : '<!DOCTYPE html><html><body style="font-family:monospace;font-size:13px;padding:16px;background:#f0fdf4;color:#065f46;white-space:pre-wrap">'+escHtml(sub.code)+'</body></html>';
+  document.getElementById('previewModal').style.display = 'flex';
+}
+function closeModal() {
+  document.getElementById('previewModal').style.display = 'none';
+  document.getElementById('previewIframe').srcdoc = '';
+}
+document.addEventListener('keydown', function(e){ if(e.key==='Escape'){closeModal();closeScriptModal();} });
+
+// ============================================================
+// SUBMIT
+// ============================================================
+function submitToFacilitator() {
+  var title = (document.getElementById('submissionTitle').value||'').trim() || 'Untitled Simulation';
+  var code  = (document.getElementById('codeInput').value||'').trim();
+  if (!code) { showToast('Please paste some code first', true); return; }
+  var now  = new Date();
+  var time = now.toLocaleTimeString('en-IN', { hour:'2-digit', minute:'2-digit' });
+  var sub  = { author: PARTICIPANT_NAME || 'Participant', title: title, code: code, time: time };
+  STATE.submissions.unshift(sub);
+  localStorage.setItem('aikep_submissions', JSON.stringify(STATE.submissions));
+  sbInsertSubmission(sub);
+  renderSubmissionFeed();
+  if (STATE.galleryRevealed) { renderGallery(); renderParGallery(); }
+  STATE.participants[6].activity = 'Submitted: '+title.substring(0,22);
+  renderParticipantTable();
+  showToast('Submitted "'+title+'" to Facilitator!');
+  document.getElementById('submissionTitle').value = '';
+}
+
+// ============================================================
+// GALLERY
+// ============================================================
+function toggleGallery(on) {
+  STATE.galleryRevealed = on;
+  localStorage.setItem('aikep_gallery_revealed', on);
+  sbSetRoomState('gallery_revealed', on);
+  applyGalleryState(on);
+  showToast(on ? 'Gallery is now LIVE for all participants!' : 'Gallery hidden from participants');
+}
+
+function applyGalleryState(on) {
+  var status = document.getElementById('galleryStatus');
+  if (status) {
+    status.textContent = on ? 'Live' : 'Hidden';
+    status.className = on ? 'badge badge-green' : 'badge';
+    status.style.cssText = on ? '' : 'color:var(--text3);border-color:var(--border);background:var(--bg3)';
+  }
+  var toggle = document.getElementById('galleryToggle');
+  if (toggle) toggle.checked = on;
+  // Sync toggle thumb CSS (since we use custom toggle CSS)
+  var track = document.querySelector('.toggle-track');
+  if (track && on) { track.style.background='var(--accent3)'; }
+  else if (track)  { track.style.background=''; }
+
+  if (on) {
+    renderGallery();
+    var pgc = document.getElementById('parGalleryCard');
+    if (pgc) pgc.style.display = '';
+    var pgn = document.getElementById('parGalleryNotice');
+    if (pgn) pgn.style.display = '';
+    renderParGallery();
+  } else {
+    var gp = document.getElementById('galleryPanel');
+    if (gp) gp.innerHTML = '<div style="padding:28px 20px;text-align:center;color:var(--text3);font-size:0.78rem"><div style="font-size:2.2rem;margin-bottom:10px">&#128444;</div>Toggle Reveal Gallery to broadcast submissions to participants.</div>';
+    var pgc2 = document.getElementById('parGalleryCard');
+    if (pgc2) pgc2.style.display = 'none';
+    var pgn2 = document.getElementById('parGalleryNotice');
+    if (pgn2) pgn2.style.display = 'none';
+  }
+}
+
+function renderGallery() {
+  var el = document.getElementById('galleryPanel');
+  if (!el) return;
+  el.innerHTML = '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:10px;padding:14px">'
+    + STATE.submissions.map(function(s,i){
+      return '<div style="background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:12px;animation:popIn 0.35s cubic-bezier(0.34,1.56,0.64,1)">'
+        +'<div style="font-size:0.75rem;font-weight:600;margin-bottom:3px;color:var(--text)">'+s.title+'</div>'
+        +'<div style="font-size:0.67rem;color:var(--text3);margin-bottom:7px">by '+s.author+'</div>'
+        +'<div style="font-family:var(--font-mono);font-size:0.63rem;color:var(--code-text);background:var(--bg4);border-radius:5px;padding:6px;max-height:58px;overflow:hidden;white-space:pre;border:1px solid var(--border)">'+escHtml(s.code)+'</div>'
+        +'<div style="margin-top:8px"><button class="preview-btn" onclick="openPreview('+i+')">&#128065; Preview</button></div>'
+        +'</div>';
+    }).join('') + '</div>';
+}
+
+function renderParGallery() {
+  var el = document.getElementById('parGalleryWall');
+  if (!el) return;
+  el.innerHTML = STATE.submissions.map(function(s){
+    return '<div style="background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:12px;animation:popIn 0.35s cubic-bezier(0.34,1.56,0.64,1)">'
+      +'<div style="font-size:0.75rem;font-weight:600;margin-bottom:3px">'+s.title+'</div>'
+      +'<div style="font-size:0.67rem;color:var(--text3);margin-bottom:7px">by '+s.author+' - '+s.time+'</div>'
+      +'<div style="font-family:var(--font-mono);font-size:0.63rem;color:var(--code-text);background:var(--bg4);border-radius:5px;padding:6px;max-height:58px;overflow:hidden;white-space:pre;border:1px solid var(--border)">'+escHtml(s.code)+'</div>'
+      +'</div>';
+  }).join('');
+}
+
+// ============================================================
+// POLL
+// ============================================================
+function renderPollChart() {
+  var el = document.getElementById('pollChart');
+  if (!el) return;
+  el.innerHTML = STATE.pollData.map(function(p){
+    return '<div style="display:flex;flex-direction:column;gap:4px">'
+      +'<div style="display:flex;justify-content:space-between;font-size:0.74rem;color:var(--text)">'
+      +'<span>'+p.label+'</span><span style="color:var(--text3);font-family:var(--font-mono)">'+p.val+'%</span></div>'
+      +'<div style="background:var(--bg3);border-radius:999px;height:8px;overflow:hidden;border:1px solid var(--border)">'
+      +'<div style="height:100%;border-radius:999px;background:linear-gradient(90deg,var(--fac),var(--par));width:'+p.val+'%;transition:width 0.8s cubic-bezier(0.4,0,0.2,1)"></div></div></div>';
+  }).join('');
+  var avg = Math.round(STATE.pollData.reduce(function(a,p){return a+p.val;},0)/STATE.pollData.length);
+  var el2 = document.getElementById('statComp');
+  if (el2) el2.textContent = avg+'%';
+}
+
+function refreshPoll() {
+  STATE.pollData = STATE.pollData.map(function(p){
+    return Object.assign({},p,{val:Math.max(20,Math.min(96,p.val+(Math.random()*14-7)|0))});
+  });
+  renderPollChart();
+  showToast('Poll data refreshed');
+}
+
+// ============================================================
+// CHAT — Gemini API Socratic Tutor
+// ============================================================
+var CHAT_HISTORY = [];
+var LANG_NAMES = { en:'English', kn:'Kannada', hi:'Hindi', mr:'Marathi' };
+
+function buildSocraticSystemPrompt() {
+  var session = SESSIONS[STATE.currentSession];
+  var lang = LANG_NAMES[STATE.activeLang] || 'English';
+  var vNote = STATE.activeLang !== 'en'
+    ? 'The participant uses the Vernacular Bridge: '+lang+'. Weave brief '+lang+' translations of key technical terms alongside English. Key terms only, not full sentences.'
+    : '';
+  return 'You are an expert Socratic engineering tutor in a 2-day Knowledge Enhancement Programme for engineering faculty.\n\n'
+    +'CURRENT SESSION: "'+session.label+'" (Day '+session.day+', '+session.duration+')\n\n'
+    +'RULES:\n'
+    +'- Respond ONLY to what the participant just wrote. Analyse their exact words, assumptions, and gaps.\n'
+    +'- NEVER give a direct answer. Guide with a precise counter-question or targeted challenge addressing exactly what they said.\n'
+    +'- Probe exactly ONE: boundary conditions of their claim, mathematical structure implied, physical intuition behind their words, an engineering constraint they missed, or energy/dimensional logic.\n'
+    +'- Max 4 sentences. End with one sharp question advancing directly from what they said.\n'
+    +'- Redirect gently if off-topic.\n'
+    +'- Plain prose only. No markdown. No bullet lists. Inline formulas like tau=-kappa*theta.\n'
+    +(vNote?vNote+'\n':'')
+    +'TONE: Warm but rigorous. A doctoral supervisor who enjoys watching a student reach their own insight.';
+}
+
+function renderInitialChat() {
+  var session = SESSIONS[STATE.currentSession];
+  var txt = 'Welcome to the Socratic Tutor Sandbox. I will not give you answers — I will ask sharper questions. '
+    +'Every reply will engage directly with what you say, probe the specific gap in your reasoning, and end with a question that pushes you one level deeper. '
+    +'We are in "'+session.label+'". What concept would you like to wrestle with?';
+  CHAT_HISTORY.length = 0;
+  var el = document.getElementById('chatMessages');
+  if (el) { el.innerHTML = renderMsg('ai', txt); el.scrollTop = el.scrollHeight; }
+  CHAT_HISTORY.push({ role:'model', parts:[{text:txt}] });
+}
+
+function renderMsg(role, text) {
+  return '<div class="chat-msg '+(role==='user'?'user':'')+'">'
+    +'<div class="chat-avatar '+(role==='ai'?'avatar-ai':'avatar-user')+'">'+(role==='ai'?'AI':'You')+'</div>'
+    +'<div class="chat-bubble '+(role==='ai'?'bubble-ai':'bubble-user')+'">'+text+'</div></div>';
+}
+
+function handleChatKey(e) {
+  if (e.key==='Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+}
+
+async function sendMessage() {
+  var input = document.getElementById('chatInput');
+  var text  = (input.value||'').trim();
+  if (!text) return;
+  input.value = '';
+  input.disabled = true;
+  document.querySelector('.send-btn').disabled = true;
+  CHAT_HISTORY.push({ role:'user', parts:[{text:text}] });
+  var el = document.getElementById('chatMessages');
+  el.insertAdjacentHTML('beforeend', renderMsg('user', text));
+  el.insertAdjacentHTML('beforeend',
+    '<div class="chat-msg" id="typingIndicator"><div class="chat-avatar avatar-ai">AI</div>'
+    +'<div class="chat-bubble bubble-ai bubble-typing">'
+    +'<div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div>'
+    +'</div></div>');
+  el.scrollTop = el.scrollHeight;
+  try {
+    var reply = await callGemini(CHAT_HISTORY.slice(), buildSocraticSystemPrompt());
+    var ti = document.getElementById('typingIndicator');
+    if (ti) ti.remove();
+    CHAT_HISTORY.push({ role:'model', parts:[{text:reply}] });
+    el.insertAdjacentHTML('beforeend', renderMsg('ai', reply));
+  } catch(err) {
+    var ti2 = document.getElementById('typingIndicator');
+    if (ti2) ti2.remove();
+    el.insertAdjacentHTML('beforeend', renderMsg('ai', 'Error: '+err.message));
+  }
+  el.scrollTop = el.scrollHeight;
+  STATE.participants[1].activity = 'Socratic sandbox active';
+  renderParticipantTable();
+  input.disabled = false;
+  document.querySelector('.send-btn').disabled = false;
+  input.focus();
+}
+
+function setLang(lang, btn) {
+  STATE.activeLang = lang;
+  document.querySelectorAll('.lang-btn').forEach(function(b){ b.classList.remove('active'); });
+  btn.classList.add('active');
+  showToast('Vernacular bridge: '+btn.textContent);
+}
+
+// ============================================================
+// FACILITATOR SESSION SCRIPT (Gemini AI generation)
+// ============================================================
+async function generateSessionScript() {
+  var key = getApiKey();
+  if (!key) { showToast('Paste your Gemini API key first', true); return; }
+  var session = SESSIONS[STATE.currentSession];
+  var btn  = document.getElementById('scriptGenBtn');
+  var body = document.getElementById('facScriptBody');
+  btn.disabled = true; btn.textContent = 'Generating...';
+  body.innerHTML = '<div class="script-loading"><div class="script-spinner"></div>Gemini is writing your session script...</div>';
+  var prompt = 'Write a detailed FACILITATOR PRESENTER SCRIPT for this session of a 2-Day Knowledge Enhancement Programme titled "AI-Driven Classroom for Effective Teaching and Learning in an Engineering Course".\n\n'
+    +'SESSION: '+session.label+'\nDAY: Day '+session.day+'\nTIME SLOT: '+session.duration+'\n\n'
+    +'Include these sections:\n'
+    +'1. OPENING HOOK (2-3 min)\n2. SESSION OBJECTIVES (3-4 outcomes)\n3. CORE CONTENT WALKTHROUGH\n'
+    +'4. PARTICIPANT ACTIVITY (step-by-step)\n5. DISCUSSION PROMPTS (3-4 Socratic questions)\n'
+    +'6. ENGINEERING CONTEXT BRIDGES (2-3 domain examples)\n7. CLOSING SYNTHESIS (2-3 min)\n8. FACILITATOR TIPS\n\n'
+    +'Address facilitator directly. 600-750 words. Plain text, no markdown.';
+  try {
+    var script = await callGemini([{role:'user',parts:[{text:prompt}]}]);
+    var lines = script.split('\n');
+    var out='', secTitle='', secBody='', sectionRe=/^(\d+\.\s+[A-Z]|[A-Z]{3,})/;
+    function flush(){ if(secTitle){ out+='<div class="script-section"><div class="script-section-title">'+escHtml(secTitle)+'</div>'+(secBody.trim()?'<div class="script-section-body">'+escHtml(secBody.trim()).replace(/\n/g,'<br>')+'</div>':'')+'</div>'; } }
+    lines.forEach(function(line){ if(sectionRe.test(line.trim())){flush();secTitle=line.trim();secBody='';}else{secBody+=line+'\n';} });
+    flush();
+    body.innerHTML = out || '<div class="script-section-body">'+escHtml(script).replace(/\n/g,'<br>')+'</div>';
+    document.getElementById('scriptModalContent').textContent = script;
+    document.getElementById('scriptModalTitle').textContent = session.label;
+    document.getElementById('scriptModalSub').textContent = 'Day '+session.day+' - Gemini';
+    document.getElementById('scriptModal').style.display = 'flex';
+  } catch(err) {
+    body.innerHTML = '<div style="padding:14px;color:var(--danger);font-size:0.8rem">Error: '+err.message+'</div>';
+  }
+  btn.disabled = false; btn.textContent = '\u2726 Gemini AI';
+}
+
+function openScriptModal() {
+  renderStaticScript(STATE.currentSession);
+  document.getElementById('scriptModal').style.display = 'flex';
+}
+function closeScriptModal() {
+  document.getElementById('scriptModal').style.display = 'none';
+}
+
+// ============================================================
+// LIVE TICK & TOAST
+// ============================================================
+var ACTIVITIES = ['Socratic sandbox active','Reviewing timeline','LLM prompting task','Vernacular bridge active','Generating simulation','Code submission draft','Completed Socratic Module','Torsional Pendulum Sim','Fourier Series task','RC Circuit analysis','Beam deflection calc'];
+
+function liveTick() {
+  var i = Math.floor(Math.random()*STATE.participants.length);
+  if (STATE.participants[i].status==='online') {
+    STATE.participants[i].activity = ACTIVITIES[Math.floor(Math.random()*ACTIVITIES.length)];
+    renderParticipantTable();
+  }
+}
+
+var _toastTimer;
+function showToast(msg, warn) {
+  var old = document.querySelector('.toast');
+  if (old) old.remove();
+  clearTimeout(_toastTimer);
+  var el = document.createElement('div');
+  el.className = 'toast';
+  el.style.borderColor = warn ? 'var(--warn)' : 'var(--accent3)';
+  el.style.color = warn ? 'var(--warn)' : 'var(--accent3)';
+  el.textContent = msg;
+  document.body.appendChild(el);
+  _toastTimer = setTimeout(function(){ el.remove(); }, 3200);
+}
+
+// localStorage cross-tab fallback
+window.addEventListener('storage', function(e) {
+  if (e.key==='aikep_current_session' && e.newValue!==null && !supabase) {
+    var idx=parseInt(e.newValue);
+    STATE.currentSession=idx; rebuildSessionStatuses(idx);
+    renderSessionBtns(); renderTimeline(); renderStaticScript(idx);
+  }
+  if (e.key==='aikep_gallery_revealed' && !supabase) {
+    var on=e.newValue==='true'; STATE.galleryRevealed=on; applyGalleryState(on);
+  }
+  if (e.key==='aikep_theme') applyTheme(e.newValue);
+});
+</script>
+</body>
+</html>
