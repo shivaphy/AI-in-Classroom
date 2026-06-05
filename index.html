@@ -777,7 +777,15 @@
 // ============================================================
 // VIEW SWITCH & THEME — hoisted so load handler can call them
 // ============================================================
+function getRole() {
+  // Always re-read from URL first, fall back to localStorage
+  var p = new URLSearchParams(window.location.search);
+  return p.get('role') || localStorage.getItem('aikep_role') || 'facilitator';
+}
+
 function switchView(v) {
+  // If this device joined as participant, lock to participant view always
+  if (getRole() === 'participant' && v === 'fac') return;
   document.getElementById('viewFac').classList.toggle('active', v === 'fac');
   document.getElementById('viewPar').classList.toggle('active', v === 'par');
   document.getElementById('tabFac').className = 'tab-btn' + (v === 'fac' ? ' active-fac' : '');
@@ -882,12 +890,15 @@ function applyRoomState(key, value) {
     renderSessionBtns();
     renderTimeline();
     renderStaticScript(idx);
-    document.getElementById('currentSessionLabel').textContent = 'Session ' + (idx+1) + ' - ' + SESSIONS[idx].label;
+    var lbl = document.getElementById('currentSessionLabel');
+    if (lbl) lbl.textContent = 'Session ' + (idx+1) + ' - ' + SESSIONS[idx].label;
+    // Never switch view — participant stays on participant, facilitator on facilitator
   }
   if (key === 'gallery_revealed') {
     var on = value === 'true' || value === true;
     STATE.galleryRevealed = on;
-    document.getElementById('galleryToggle').checked = on;
+    var gt = document.getElementById('galleryToggle');
+    if (gt) gt.checked = on;
     applyGalleryState(on);
   }
 }
@@ -1111,8 +1122,23 @@ async function callGemini(contents, systemInstruction) {
 window.addEventListener('load', function() {
   var params = new URLSearchParams(window.location.search);
   var role = params.get('role') || localStorage.getItem('aikep_role') || 'facilitator';
-  localStorage.setItem('aikep_role', role);
-  switchView(role === 'participant' ? 'par' : 'fac');
+  // Always honour URL param — overwrite any previously stored role
+  if (params.get('role')) localStorage.setItem('aikep_role', params.get('role'));
+  else localStorage.setItem('aikep_role', role);
+
+  if (role === 'participant') {
+    // Lock participant view: hide facilitator tab, disable onclick
+    var tabFac = document.getElementById('tabFac');
+    if (tabFac) {
+      tabFac.style.display = 'none';
+    }
+    // Also retitle the header so participants see their role clearly
+    var liveLabel = document.querySelector('.live-badge');
+    if (liveLabel) liveLabel.innerHTML = '<div class="live-dot"></div>PARTICIPANT';
+    switchView('par');
+  } else {
+    switchView('fac');
+  }
 
   var setup = getSetup();
   PARTICIPANT_NAME = setup.name || 'Participant';
