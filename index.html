@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>AI-Driven Classroom · Knowledge Enhancement Programme</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght=400;700&family=Syne:wght=400;600;700;800&family=IBM+Plex+Sans:ital,wght=0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
 <style>
   :root {
     --bg:#f8fafc;--bg2:#ffffff;--bg3:#f1f5f9;--bg4:#e2e8f0;
@@ -329,6 +329,11 @@
   }
   .lang-btn.active { background: var(--accent2); border-color: var(--accent2); color: #fff; }
 
+  /* FORMULA PALETTE */
+  .formula-palette { display: flex; gap: 5px; flex-wrap: wrap; border-bottom: 1px solid var(--border); background: var(--bg3); }
+  [data-theme="dark"] .formula-palette { background: var(--bg2); border-bottom-color: var(--border); }
+  .formula-palette .lang-btn { font-family: var(--font-mono); font-size: 0.7rem; padding: 3px 9px; letter-spacing: 0.01em; }
+
   /* CODE EDITOR */
   .code-editor {
     background: var(--bg3); border: 1px solid var(--border);
@@ -374,10 +379,23 @@
   }
   @keyframes toastIn { from{opacity:0;transform:translateY(20px) scale(0.9)} to{opacity:1;transform:none} }
 
-  /* SCROLLBARS */
-  ::-webkit-scrollbar { width: 4px; height: 4px; }
-  ::-webkit-scrollbar-track { background: transparent; }
-  ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 4px; }
+  /* BODY SCROLL LOCK */
+  body.no-scroll { overflow: hidden; }
+
+  /* RESPONSIVE BREAKPOINTS */
+  @media (max-width: 1024px) {
+    .fac-grid { grid-template-columns: 1fr !important; padding: 12px; }
+    .par-grid { grid-template-columns: 1fr !important; padding: 12px; }
+    .header { padding: 0 14px; }
+    .view-tabs .tab-btn { padding: 6px 10px; font-size: 0.75rem; }
+  }
+  @media (max-width: 640px) {
+    .stat-row { grid-template-columns: 1fr 1fr; }
+    .live-badge { display: none; }
+    .modal-box { width: 98vw; max-height: 95vh; }
+    .modal-body { flex-direction: column !important; }
+    .modal-body > div:last-child { width: 100% !important; }
+  }
 
   /* UTILITY */
   .flex-between { display: flex; align-items: center; justify-content: space-between; }
@@ -415,7 +433,7 @@
   .script-spinner{width:18px;height:18px;border-radius:50%;border:2px solid var(--border2);border-top-color:var(--fac);animation:spin 0.7s linear infinite;flex-shrink:0;}
   @keyframes spin{to{transform:rotate(360deg)}}
   .preview-btn{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:5px;border:1px solid var(--border2);background:var(--bg2);color:var(--par);cursor:pointer;font-size:0.7rem;transition:all 0.15s;white-space:nowrap;flex-shrink:0;}
-  .preview-btn:hover{background:rgba(8,145,178,0.1);border-color:var(--par);}
+  .preview-btn:hover { background:rgba(8,145,178,0.1); border-color:var(--par); }
   .add-pt-btn{padding:3px 8px;border-radius:5px;border:1px solid var(--border2);background:var(--bg3);color:var(--warn);cursor:pointer;font-size:0.7rem;transition:all 0.15s;white-space:nowrap;}
   .add-pt-btn:hover{background:rgba(217,119,6,0.1);border-color:var(--warn);}
   .star-filled{color:var(--warn);} .star-empty{color:var(--border2);}
@@ -423,12 +441,82 @@
   .ref-btn{padding:7px;width:100%;border-radius:6px;border:1px solid var(--border);background:var(--bg3);color:var(--text2);cursor:pointer;font-size:0.75rem;font-family:var(--font-body);margin-top:10px;transition:all 0.15s;}
   .ref-btn:hover{border-color:var(--par);color:var(--par);}
 
+
+  /* ── VOW WALL ── */
+  .vow-wall { display:flex;flex-direction:column;gap:8px;max-height:280px;overflow-y:auto;padding:2px; }
+  .vow-card {
+    background:linear-gradient(135deg,rgba(109,40,217,0.07),rgba(8,145,178,0.05));
+    border:1px solid rgba(109,40,217,0.18);border-radius:var(--radius2);
+    padding:10px 14px;animation:popIn 0.4s cubic-bezier(0.34,1.56,0.64,1);
+  }
+  .vow-card-name { font-size:0.72rem;font-weight:700;color:var(--fac);margin-bottom:3px; }
+  .vow-card-text { font-size:0.78rem;line-height:1.5;color:var(--text);font-style:italic; }
+  .vow-card-meta { font-size:0.62rem;color:var(--text3);font-family:var(--font-mono);margin-top:4px; }
+
+  /* ── LEADERBOARD ── */
+  .lb-row {
+    display:flex;align-items:center;gap:10px;padding:8px 12px;
+    border-radius:var(--radius2);border:1px solid var(--border);
+    background:var(--bg3);transition:border-color 0.2s;cursor:pointer;
+  }
+  .lb-row:hover { border-color:var(--fac); }
+  .lb-rank { font-family:var(--font-mono);font-size:0.72rem;font-weight:700;color:var(--text3);min-width:20px; }
+  .lb-rank.gold { color:#f59e0b; }
+  .lb-rank.silver { color:#94a3b8; }
+  .lb-rank.bronze { color:#b45309; }
+  .lb-info { flex:1;min-width:0; }
+  .lb-title { font-size:0.78rem;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap; }
+  .lb-author { font-size:0.67rem;color:var(--text3); }
+  .lb-score { font-family:var(--font-mono);font-size:0.82rem;font-weight:700;color:var(--fac);flex-shrink:0; }
+
+  /* ── NOMINATION TICKER ── */
+  .nom-ticker { display:flex;flex-direction:column;gap:6px;max-height:200px;overflow-y:auto; }
+  .nom-item {
+    font-size:0.76rem;padding:7px 11px;border-radius:6px;
+    background:rgba(5,150,105,0.07);border:1px solid rgba(5,150,105,0.15);
+    animation:popIn 0.3s ease;line-height:1.5;
+  }
+  .nom-item strong { color:var(--accent3); }
+
+  /* ── COUNTDOWN TIMER ── */
+  .timer-display {
+    font-family:var(--font-mono);font-size:1.6rem;font-weight:700;
+    text-align:center;letter-spacing:0.05em;padding:6px 0;
+    background:linear-gradient(135deg,var(--fac),var(--par));
+    -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  }
+  .timer-display.urgent { -webkit-background-clip:unset;-webkit-text-fill-color:unset;background:none;color:var(--danger);animation:pulse 0.6s infinite; }
+  .timer-controls { display:flex;gap:6px;align-items:center; }
+  .timer-btn { padding:4px 10px;border-radius:6px;border:1px solid var(--border2);background:var(--bg3);color:var(--text2);cursor:pointer;font-size:0.72rem;transition:all 0.15s; }
+  .timer-btn:hover { border-color:var(--fac);color:var(--fac); }
+  .timer-btn.danger:hover { border-color:var(--danger);color:var(--danger); }
+
+  /* ── PROGRESS RING ── */
+  .progress-ring-wrap { display:flex;align-items:center;gap:12px;padding:8px 0; }
+  .ring-label { font-size:0.72rem;color:var(--text2);line-height:1.5; }
+  .ring-val { font-family:var(--font-mono);font-size:0.75rem;font-weight:700;color:var(--accent); }
+
+  /* ── CONFETTI CANVAS ── */
+  #confettiCanvas { position:fixed;inset:0;pointer-events:none;z-index:9999;display:none; }
+
+  /* ── ACTION PLAN FORM ── */
+  .plan-field { display:flex;flex-direction:column;gap:4px; }
+  .plan-label { font-size:0.68rem;font-family:var(--font-mono);color:var(--text3);text-transform:uppercase;letter-spacing:0.04em; }
+  .plan-input {
+    background:var(--bg3);border:1px solid var(--border2);border-radius:6px;
+    padding:8px 10px;color:var(--text);font-size:0.78rem;font-family:var(--font-body);
+    outline:none;resize:none;transition:border-color 0.2s;
+  }
+  .plan-input:focus { border-color:var(--par); }
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/brython/3.12.4/brython.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/brython/3.12.4/brython_stdlib.min.js"></script>
 </head>
 <body>
 
-<!-- ===== SUPABASE SETUP MODAL ===== -->
+
+<canvas id="confettiCanvas"></canvas>
 <div class="modal-overlay" id="setupModal" style="display:none">
   <div class="modal-box" style="max-width:480px">
     <div class="modal-header">
@@ -478,11 +566,9 @@
   </div>
 </header>
 
-<!-- ========== FACILITATOR VIEW ========== -->
 <div class="view active" id="viewFac">
   <div class="fac-grid">
 
-    <!-- LEFT: Master Control -->
     <div style="display:flex;flex-direction:column;gap:12px">
       <div class="card">
         <div class="card-header">
@@ -512,6 +598,43 @@
             </label>
           </div>
         </div>
+
+      <!-- COUNTDOWN TIMER -->
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">Session Timer</span>
+          <button class="preview-btn" onclick="resetTimer()" title="Reset">&#x21BA;</button>
+        </div>
+        <div class="card-body" style="display:flex;flex-direction:column;gap:8px">
+          <div class="timer-display" id="timerDisplay">30:00</div>
+          <div class="timer-controls">
+            <select id="timerPreset" style="flex:1;background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:4px 8px;color:var(--text);font-size:0.72rem;outline:none;cursor:pointer">
+              <option value="30">30 min</option>
+              <option value="45">45 min</option>
+              <option value="60">60 min</option>
+              <option value="90">90 min</option>
+              <option value="10">10 min (activity)</option>
+              <option value="15">15 min (activity)</option>
+              <option value="25">25 min (activity)</option>
+            </select>
+            <button class="timer-btn" id="timerStartBtn" onclick="startTimer()">&#9654; Start</button>
+            <button class="timer-btn danger" onclick="resetTimer()">&#9632; Stop</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- LEADERBOARD -->
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">Live Leaderboard</span>
+          <span class="badge badge-fac" id="lbCount">0 scored</span>
+        </div>
+        <div class="card-body" style="padding-bottom:10px">
+          <div id="leaderboard" style="display:flex;flex-direction:column;gap:6px">
+            <div style="font-size:0.74rem;color:var(--text3);text-align:center;padding:12px">Score submissions via the rubric to populate rankings.</div>
+          </div>
+        </div>
+      </div>
       </div>
 
       <div class="card">
@@ -522,6 +645,45 @@
           <div class="poll-chart" id="pollChart"></div>
           <button class="ref-btn" onclick="refreshPoll()">&#x21BB; Refresh Poll</button>
         </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header"><span class="card-title">Dept. Distribution</span></div>
+        <div class="card-body" id="deptChartBody"></div>
+      </div>
+
+      <div class="card">
+        <div class="card-header"><span class="card-title">SAR Matrix (NBA Track)</span></div>
+        <div class="card-body" id="poChartBody" style="display:flex;flex-direction:column;gap:10px"></div>
+
+      <!-- VOW WALL -->
+      <div class="card" id="vowWallCard">
+        <div class="card-header">
+          <span class="card-title">🤝 Vow Wall</span>
+          <span class="badge badge-fac" id="vowCount">0 vows</span>
+        </div>
+        <div class="card-body" style="padding-bottom:10px">
+          <div class="vow-wall" id="vowWall">
+            <div style="font-size:0.74rem;color:var(--text3);text-align:center;padding:12px">Vows appear here when participants submit from Session 8.</div>
+          </div>
+          <button onclick="triggerCelebration()" class="ref-btn" style="margin-top:10px">🎉 Trigger Celebration Burst</button>
+          <button onclick="openCertModal()" class="ref-btn">🏅 Generate Certificates</button>
+        </div>
+      </div>
+
+      <!-- PEER NOMINATIONS -->
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">💬 Peer Nominations</span>
+          <span class="badge badge-green" id="nomCount">0</span>
+        </div>
+        <div class="card-body" style="padding-bottom:10px">
+          <div class="nom-ticker" id="nominationFeed">
+            <div style="font-size:0.74rem;color:var(--text3);text-align:center;padding:8px">Nominations arrive when participants submit.</div>
+          </div>
+        </div>
+      </div>
+
       </div>
 
       <div class="card">
@@ -536,7 +698,6 @@
 
     </div>
 
-    <!-- CENTRE: Participant Activity -->
     <div style="display:flex;flex-direction:column;gap:12px">
       <div class="stat-row">
         <div class="stat-card">
@@ -594,28 +755,8 @@
 
     </div>
 
-    <!-- RIGHT: Gallery Panel -->
     <div style="display:flex;flex-direction:column;gap:12px">
 
-      <!-- Gallery Reveal Toggle -->
-      <div class="card">
-        <div class="card-header"><span class="card-title">Gallery Reveal</span></div>
-        <div style="padding:16px">
-          <div style="display:flex;align-items:center;justify-content:space-between">
-            <div>
-              <div style="font-size:0.84rem;font-weight:600;color:var(--text)">Reveal Project Gallery</div>
-              <div style="font-size:0.7rem;color:var(--text3);margin-top:2px">Pushes all submissions to participant screens</div>
-            </div>
-            <label style="position:relative;width:48px;height:26px;cursor:pointer">
-              <input type="checkbox" id="galleryToggle" onchange="toggleGallery(this.checked)" style="opacity:0;width:0;height:0;position:absolute">
-              <div class="toggle-track" style="position:absolute;inset:0;border-radius:999px;background:var(--bg4);border:1px solid var(--border2);transition:background 0.3s"></div>
-              <div class="toggle-thumb" style="position:absolute;left:3px;top:3px;width:18px;height:18px;border-radius:50%;background:#fff;transition:transform 0.3s;pointer-events:none;box-shadow:0 1px 4px rgba(0,0,0,0.25)"></div>
-            </label>
-          </div>
-        </div>
-      </div>
-
-      <!-- Gallery Panel -->
       <div class="card" style="flex:1">
         <div class="card-header">
           <span class="card-title">Project Gallery</span>
@@ -630,29 +771,13 @@
       </div>
 
     </div>
-    <div style="display:flex;flex-direction:column;gap:12px">
-      <div class="card" style="flex:1">
-        <div class="card-header">
-          <span class="card-title">Project Gallery</span>
-          <span id="galleryStatus" class="badge badge-fac" style="color:var(--text3);border-color:var(--border)">Hidden</span>
-        </div>
-        <div id="galleryPanel">
-          <div style="padding:24px;text-align:center;color:var(--text3);font-size:0.78rem">
-            <div style="font-size:2rem;margin-bottom:8px">🖼</div>
-            Toggle "Reveal Gallery" to push submissions to all participants
-          </div>
-        </div>
-      </div>
-    </div>
 
   </div>
 </div>
 
-<!-- ========== PARTICIPANT VIEW ========== -->
 <div class="view" id="viewPar">
   <div class="par-grid">
 
-    <!-- LEFT: Timeline -->
     <div style="display:flex;flex-direction:column;gap:12px">
       <div class="card">
         <div class="card-header">
@@ -669,20 +794,50 @@
         <div class="card-body" style="display:flex;flex-direction:column;gap:8px">
           <div style="display:flex;align-items:center;gap:8px">
             <div class="status-dot online"></div>
-            <span style="font-size:0.82rem;font-weight:600">Participant #P07</span>
+            <span style="font-size:0.82rem;font-weight:600">Participant Workspace</span>
           </div>
           <div class="tip">Current: <strong id="currentSessionLabel" style="color:var(--accent)">Session 1 – Introduction</strong></div>
           <div id="parGalleryNotice" style="display:none">
             <div class="notice-banner">&#127881; Gallery is LIVE! Peer submissions visible below.</div>
           </div>
+
+          <!-- SESSION PROGRESS RING -->
+          <div class="progress-ring-wrap" id="progressRingWrap">
+            <svg width="52" height="52" viewBox="0 0 52 52">
+              <circle cx="26" cy="26" r="22" fill="none" stroke="var(--border2)" stroke-width="4"/>
+              <circle id="progressRingCircle" cx="26" cy="26" r="22" fill="none"
+                stroke="url(#ringGrad)" stroke-width="4"
+                stroke-dasharray="138.23" stroke-dashoffset="138.23"
+                stroke-linecap="round" transform="rotate(-90 26 26)"
+                style="transition:stroke-dashoffset 0.6s ease"/>
+              <defs>
+                <linearGradient id="ringGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" stop-color="var(--fac)"/>
+                  <stop offset="100%" stop-color="var(--par)"/>
+                </linearGradient>
+              </defs>
+              <text x="26" y="30" text-anchor="middle" font-size="11" font-family="Space Mono" fill="var(--text)" font-weight="700" id="progressRingText">0/8</text>
+            </svg>
+            <div class="ring-label">Programme progress<br><span class="ring-val" id="progressRingPct">0%</span> complete</div>
+          </div>
+
+          <!-- SESSION 8 VOW / PLAN BUTTONS -->
+          <div id="parSession8Actions" style="display:none;flex-direction:column;gap:6px">
+            <div class="notice-banner">🎓 Session 8 is live — time for your vow!</div>
+            <button onclick="openVowModal()" class="submit-btn" style="margin-top:4px">🤝 Submit My Vow</button>
+            <button onclick="openActionPlan()" class="timer-btn" style="width:100%;padding:9px;font-size:0.78rem">📋 Fill 30-Day Action Plan</button>
+            <div class="plan-field" style="margin-top:4px">
+              <label class="plan-label">Nominate a peer (whose simulation changed your thinking):</label>
+              <textarea class="plan-input" id="nomineeName" rows="2" placeholder="Name + one sentence why..."></textarea>
+              <button onclick="submitNomination()" class="ref-btn" style="margin-top:4px">💬 Send Nomination</button>
+            </div>
+          </div>
         </div>
       </div>
     </div>
 
-    <!-- RIGHT: Workspace -->
     <div style="display:flex;flex-direction:column;gap:12px">
 
-      <!-- Socratic Tutor -->
       <div class="card">
         <div class="card-header">
           <span class="card-title">Socratic Tutor Sandbox</span>
@@ -695,6 +850,13 @@
           <button class="lang-btn" onclick="setLang('hi', this)">हिंदी</button>
           <button class="lang-btn" onclick="setLang('mr', this)">मराठी</button>
         </div>
+        <div class="formula-palette" style="padding:6px 12px;display:flex;gap:5px;flex-wrap:wrap;">
+          <span style="font-size:0.68rem;color:var(--text3);align-self:center;font-family:var(--font-mono);white-space:nowrap;margin-right:4px">Insert Quick-Formula:</span>
+          <button class="lang-btn" onclick="insertFormula('\u03c4 = -\u03ba\u03b8')" title="Torsional Pendulum Restoring Torque">τ = -κθ</button>
+          <button class="lang-btn" onclick="insertFormula('\u03c9 = \u221a(k/m)')" title="Angular Frequency">ω = √(k/m)</button>
+          <button class="lang-btn" onclick="insertFormula('V = I \u00d7 R')" title="Ohm&apos;s Law">V = I × R</button>
+          <button class="lang-btn" onclick="insertFormula('P + \u00bd\u03c1v\u00b2 + \u03c1gh = C')" title="Bernoulli&apos;s Equation">P + ½ρv² + ρgh = C</button>
+        </div>
         <div class="chat-container">
           <div class="chat-messages" id="chatMessages"></div>
           <div class="chat-input-row">
@@ -704,13 +866,18 @@
         </div>
       </div>
 
-      <!-- Code Submission -->
       <div class="card">
         <div class="card-header">
           <span class="card-title">Live Submission Module</span>
           <span class="badge badge-green">→ Facilitator</span>
         </div>
         <div class="card-body" style="display:flex;flex-direction:column;gap:10px">
+          <select id="submissionPO" style="width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:8px 12px;color:var(--text);font-size:0.8rem;outline:none;font-family:var(--font-body);margin-bottom:2px;cursor:pointer">
+            <option value="" disabled selected style="color:var(--text3)">-- Map to NBA/SAR Programme Outcome Matrix --</option>
+            <option value="PO1">PO1: Engineering Knowledge (Core Mechanical/Physics Principles)</option>
+            <option value="PO3">PO3: Design &amp; Development of Solutions (Interactive Simulations)</option>
+            <option value="PO5">PO5: Modern Tool Usage (AI Prompting &amp; Pedagogical Tutors)</option>
+          </select>
           <input id="submissionTitle" type="text" placeholder="Simulation title (e.g., Torsional Pendulum Simulation)"
             style="background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:8px 12px;color:var(--text);font-size:0.8rem;outline:none;width:100%;font-family:var(--font-body)">
           <div class="code-editor">
@@ -722,13 +889,12 @@
               </div>
               <span class="editor-lang">HTML / JavaScript / Python</span>
             </div>
-            <textarea class="editor-textarea" id="codeInput" placeholder="<!-- Paste your code or HTML simulation here -->&#10;<!-- Generated with AI assistance during the workshop -->&#10;&#10;Example:&#10;&lt;canvas id=&quot;pendulum&quot;&gt;&lt;/canvas&gt;&#10;&lt;script&gt;&#10;  // Torsional pendulum physics simulation&#10;  const theta0 = 0.5; // initial angle (radians)&#10;  const omega = 2.5;  // angular frequency&#10;  function simulate(t) {&#10;    return theta0 * Math.cos(omega * t);&#10;  }&#10;&lt;/script&gt;"></textarea>
+            <textarea class="editor-textarea" id="codeInput" placeholder="&#10;&#10;&#10;Example:&#10;&lt;canvas id=&quot;pendulum&quot;&gt;&lt;/canvas&gt;&#10;&lt;script&gt;&#10;  // Torsional pendulum physics simulation&#10;  const theta0 = 0.5; // initial angle (radians)&#10;  const omega = 2.5;  // angular frequency&#10;  function simulate(t) {&#10;    return theta0 * Math.cos(omega * t);&#10;  }&#10;&lt;/script&gt;"></textarea>
           </div>
           <button class="submit-btn" onclick="submitToFacilitator()">⬆ Submit to Facilitator Dashboard</button>
         </div>
       </div>
 
-      <!-- Gallery (participant-side, revealed when facilitator enables) -->
       <div class="card" id="parGalleryCard" style="display:none">
         <div class="card-header">
           <span class="card-title">🎓 Peer Submission Gallery</span>
@@ -741,7 +907,88 @@
   </div>
 </div>
 
-<!-- ===== SIMULATION PREVIEW MODAL ===== -->
+
+<!-- VOW PLEDGE MODAL (participant) -->
+<div class="modal-overlay" id="vowModal" style="display:none" onclick="if(event.target===this)closeVowModal()">
+  <div class="modal-box" style="max-width:520px">
+    <div class="modal-header">
+      <div>
+        <div class="modal-title">🎓 Your 30-Day Vow</div>
+        <div class="modal-subtitle">Session 8 · Programme Closure</div>
+      </div>
+      <button class="modal-close" onclick="closeVowModal()">&#x2715;</button>
+    </div>
+    <div class="modal-body" style="gap:14px">
+      <div class="modal-notice">This is the closing artefact of the KEP. Your vow will appear live on the facilitator screen.</div>
+      <div class="plan-field">
+        <label class="plan-label">The question I will ask my next batch of students — that I could not have asked before today:</label>
+        <textarea class="plan-input" id="vowQuestion" rows="3" placeholder="e.g. If this formula is a map, what territory does it leave uncharted?"></textarea>
+      </div>
+      <div class="plan-field">
+        <label class="plan-label">One Socratic simulation I will deploy within 30 days:</label>
+        <textarea class="plan-input" id="vowSim" rows="2" placeholder="e.g. Torsional Pendulum Sandbox for Mechanical Vibrations (Sem 5)"></textarea>
+      </div>
+      <div class="plan-field">
+        <label class="plan-label">One vernacular bridge moment I commit to:</label>
+        <textarea class="plan-input" id="vowVernacular" rows="2" placeholder="e.g. Explain RC transient in Kannada before English formalisation"></textarea>
+      </div>
+      <button onclick="submitVow()" class="submit-btn" style="margin-top:4px">🤝 Submit My Vow to the Room</button>
+    </div>
+  </div>
+</div>
+
+<!-- ACTION PLAN MODAL (participant) -->
+<div class="modal-overlay" id="actionPlanModal" style="display:none" onclick="if(event.target===this)closeActionPlan()">
+  <div class="modal-box" style="max-width:560px">
+    <div class="modal-header">
+      <div>
+        <div class="modal-title">📋 30-Day Action Plan</div>
+        <div class="modal-subtitle">Your operational commitment post-KEP</div>
+      </div>
+      <button class="modal-close" onclick="closeActionPlan()">&#x2715;</button>
+    </div>
+    <div class="modal-body" style="gap:12px">
+      <div class="modal-notice">Complete all four fields. Use the Export button to download your plan as a text file.</div>
+      <div class="plan-field">
+        <label class="plan-label">1. Socratic Prompt Chain I will use in class:</label>
+        <textarea class="plan-input" id="plan1" rows="3" placeholder="Describe the 3-turn chain: initial recall → probe → challenge"></textarea>
+      </div>
+      <div class="plan-field">
+        <label class="plan-label">2. Simulation I will build or adapt for my course:</label>
+        <textarea class="plan-input" id="plan2" rows="2" placeholder="Title, subject, semester, and which PO it targets"></textarea>
+      </div>
+      <div class="plan-field">
+        <label class="plan-label">3. Vernacular bridge moment planned:</label>
+        <textarea class="plan-input" id="plan3" rows="2" placeholder="Concept, language, and cultural analogy you will use"></textarea>
+      </div>
+      <div class="plan-field">
+        <label class="plan-label">4. Peer review session I will organise:</label>
+        <textarea class="plan-input" id="plan4" rows="2" placeholder="Who, when, using which rubric criteria"></textarea>
+      </div>
+      <div style="display:flex;gap:8px">
+        <button onclick="exportActionPlan()" class="submit-btn" style="flex:1">⬇ Export as Text File</button>
+        <button onclick="closeActionPlan()" class="timer-btn" style="flex:0 0 auto;padding:11px 16px">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CERTIFICATE MODAL -->
+<div class="modal-overlay" id="certModal" style="display:none" onclick="if(event.target===this)closeCertModal()">
+  <div class="modal-box" style="max-width:640px">
+    <div class="modal-header">
+      <div>
+        <div class="modal-title">🏅 Programme Completion Certificates</div>
+        <div class="modal-subtitle">Generate &amp; download per-participant cards</div>
+      </div>
+      <button class="modal-close" onclick="closeCertModal()">&#x2715;</button>
+    </div>
+    <div class="modal-body" style="gap:10px">
+      <div class="modal-notice">Click any row to download that participant's certificate as an HTML file (open in browser → Print → Save as PDF).</div>
+      <div id="certList" style="display:flex;flex-direction:column;gap:6px"></div>
+    </div>
+  </div>
+</div>
 <div class="modal-overlay" id="previewModal" style="display:none" onclick="if(event.target===this)closeModal()">
   <div class="modal-box">
     <div class="modal-header">
@@ -749,15 +996,42 @@
         <div class="modal-subtitle" id="modalSubtitle">Sandboxed execution</div></div>
       <button class="modal-close" onclick="closeModal()">&#x2715;</button>
     </div>
-    <div class="modal-body">
-      <div class="modal-notice">Running participant HTML/JS in a sandboxed iframe.</div>
-      <div style="font-family:var(--font-mono);font-size:0.72rem;color:#0f766e;background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:10px;max-height:140px;overflow-y:auto;white-space:pre-wrap" id="modalCode"></div>
-      <div class="modal-iframe-wrap"><iframe id="previewIframe" class="modal-iframe" sandbox="allow-scripts"></iframe></div>
+    <div class="modal-body" style="flex-direction:row;gap:14px;align-items:flex-start">
+      <div style="flex:1;display:flex;flex-direction:column;gap:10px;min-width:0">
+        <div class="modal-notice">Running participant compilation inside sandboxed viewport layer.</div>
+        <div style="font-family:var(--font-mono);font-size:0.72rem;color:var(--code-text);background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:10px;max-height:120px;overflow-y:auto;white-space:pre-wrap" id="modalCode"></div>
+        <div class="modal-iframe-wrap"><iframe id="previewIframe" class="modal-iframe" sandbox="allow-scripts"></iframe></div>
+      </div>
+      <div style="width:220px;flex-shrink:0;display:flex;flex-direction:column;gap:10px">
+        <div style="font-family:var(--font-display);font-weight:700;font-size:0.72rem;text-transform:uppercase;letter-spacing:0.05em;color:var(--fac);padding-bottom:6px;border-bottom:1px solid var(--border)">Assessment Rubric</div>
+        <div class="rubric-item">
+          <div style="font-size:0.75rem;font-weight:600;color:var(--text);margin-bottom:3px">1. Accuracy</div>
+          <div style="font-size:0.67rem;color:var(--text3);margin-bottom:5px">Physical &amp; mathematical correctness</div>
+          <div class="rubric-stars" data-val="0" onclick="setRubricVal(this,event)" style="cursor:pointer;font-size:1.1rem;letter-spacing:2px;color:var(--warn)">&#9734;&#9734;&#9734;&#9734;&#9734;</div>
+          <input class="rubric-note" type="text" placeholder="Note..." style="margin-top:5px;width:100%;background:var(--bg3);border:1px solid var(--border2);border-radius:6px;padding:5px 8px;font-size:0.7rem;color:var(--text);outline:none;font-family:var(--font-body)">
+        </div>
+        <div class="rubric-item">
+          <div style="font-size:0.75rem;font-weight:600;color:var(--text);margin-bottom:3px">2. Pedagogical Intent</div>
+          <div style="font-size:0.67rem;color:var(--text3);margin-bottom:5px">Classroom utility &amp; learning outcome</div>
+          <div class="rubric-stars" data-val="0" onclick="setRubricVal(this,event)" style="cursor:pointer;font-size:1.1rem;letter-spacing:2px;color:var(--warn)">&#9734;&#9734;&#9734;&#9734;&#9734;</div>
+          <input class="rubric-note" type="text" placeholder="Note..." style="margin-top:5px;width:100%;background:var(--bg3);border:1px solid var(--border2);border-radius:6px;padding:5px 8px;font-size:0.7rem;color:var(--text);outline:none;font-family:var(--font-body)">
+        </div>
+        <div class="rubric-item">
+          <div style="font-size:0.75rem;font-weight:600;color:var(--text);margin-bottom:3px">3. AI Transparency</div>
+          <div style="font-size:0.67rem;color:var(--text3);margin-bottom:5px">Human validation clarity</div>
+          <div class="rubric-stars" data-val="0" onclick="setRubricVal(this,event)" style="cursor:pointer;font-size:1.1rem;letter-spacing:2px;color:var(--warn)">&#9734;&#9734;&#9734;&#9734;&#9734;</div>
+          <input class="rubric-note" type="text" placeholder="Note..." style="margin-top:5px;width:100%;background:var(--bg3);border:1px solid var(--border2);border-radius:6px;padding:5px 8px;font-size:0.7rem;color:var(--text);outline:none;font-family:var(--font-body)">
+        </div>
+        <div style="padding-top:6px;border-top:1px solid var(--border)">
+          <div style="font-size:0.67rem;color:var(--text3);margin-bottom:3px">Total Score</div>
+          <div id="rubricTotal" style="font-family:var(--font-mono);font-size:1.1rem;font-weight:700;color:var(--fac)">0 / 15</div>
+        </div>
+        <button onclick="exportRubric()" style="padding:7px;border-radius:6px;border:1px solid var(--border2);background:var(--bg3);color:var(--text2);cursor:pointer;font-size:0.72rem;font-family:var(--font-body)">&#128196; Export Rubric</button>
+      </div>
     </div>
   </div>
 </div>
 
-<!-- ===== SESSION SCRIPT MODAL ===== -->
 <div class="modal-overlay" id="scriptModal" style="display:none" onclick="if(event.target===this)closeScriptModal()">
   <div class="modal-box" style="max-width:760px">
     <div class="modal-header">
@@ -778,13 +1052,11 @@
 // VIEW SWITCH & THEME — hoisted so load handler can call them
 // ============================================================
 function getRole() {
-  // Always re-read from URL first, fall back to localStorage
   var p = new URLSearchParams(window.location.search);
   return p.get('role') || localStorage.getItem('aikep_role') || 'facilitator';
 }
 
 function switchView(v) {
-  // If this device joined as participant, lock to participant view always
   if (getRole() === 'participant' && v === 'fac') return;
   document.getElementById('viewFac').classList.toggle('active', v === 'fac');
   document.getElementById('viewPar').classList.toggle('active', v === 'par');
@@ -874,10 +1146,12 @@ async function loadRoomState() {
   var subRes = await _sbClient.from('submissions').select('*').order('created_at', { ascending: false });
   if (subRes.data && subRes.data.length) {
     STATE.submissions = subRes.data.map(function(r){
-      return { author: r.author, title: r.title, code: r.code,
+      return { author: r.author, title: r.title, code: r.code, po: r.po || 'PO1',
         time: new Date(r.created_at).toLocaleTimeString('en-IN', { hour:'2-digit', minute:'2-digit' }) };
     });
     renderSubmissionFeed();
+    renderDeptChart();
+    renderPoChart();
     if (STATE.galleryRevealed) { renderGallery(); renderParGallery(); }
   }
 }
@@ -886,20 +1160,19 @@ function applyRoomState(key, value) {
   if (key === 'current_session') {
     var idx = parseInt(value);
     STATE.currentSession = idx;
-    rebuildSessionStatuses(idx);
-    renderSessionBtns();
-    renderTimeline();
-    renderStaticScript(idx);
+    if (typeof rebuildSessionStatuses === 'function') rebuildSessionStatuses(idx);
+    if (typeof renderSessionBtns === 'function') renderSessionBtns();
+    if (typeof renderTimeline === 'function') renderTimeline();
+    if (typeof renderStaticScript === 'function') renderStaticScript(idx);
     var lbl = document.getElementById('currentSessionLabel');
     if (lbl) lbl.textContent = 'Session ' + (idx+1) + ' - ' + SESSIONS[idx].label;
-    // Never switch view — participant stays on participant, facilitator on facilitator
   }
   if (key === 'gallery_revealed') {
     var on = value === 'true' || value === true;
     STATE.galleryRevealed = on;
     var gt = document.getElementById('galleryToggle');
     if (gt) gt.checked = on;
-    applyGalleryState(on);
+    if (typeof applyGalleryState === 'function') applyGalleryState(on);
   }
 }
 
@@ -911,12 +1184,14 @@ function subscribeRealtime() {
   });
   channel.on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'submissions' }, function(payload){
     var r = payload.new;
-    var sub = { author: r.author, title: r.title, code: r.code,
+    var sub = { author: r.author, title: r.title, code: r.code, po: r.po || 'PO1',
       time: new Date(r.created_at).toLocaleTimeString('en-IN', { hour:'2-digit', minute:'2-digit' }) };
     var exists = STATE.submissions.some(function(s){ return s.title === sub.title && s.author === sub.author; });
     if (!exists) {
       STATE.submissions.unshift(sub);
       renderSubmissionFeed();
+      renderDeptChart();
+      renderPoChart();
       if (STATE.galleryRevealed) { renderGallery(); renderParGallery(); }
       document.getElementById('statSubs').textContent = STATE.submissions.length;
       document.getElementById('subCount').textContent = STATE.submissions.length + ' items';
@@ -936,8 +1211,47 @@ async function sbSetRoomState(key, value) {
 
 async function sbInsertSubmission(sub) {
   if (!_sbClient) return;
-  var res = await _sbClient.from('submissions').insert({ author: sub.author, title: sub.title, code: sub.code });
-  if (res.error) console.error('Submission error:', res.error);
+  await _sbClient.from('submissions').insert({ author: sub.author, title: sub.title, code: sub.code, po: sub.po });
+}
+
+// ============================================================
+// UTILITIES
+// ============================================================
+function escHtml(str) {
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+var CHAT_HISTORY = [];
+
+var ACTIVITIES = [
+  'Socratic sandbox active', 'Reviewing timeline', 'Submitting simulation',
+  'LLM prompting task', 'Vernacular bridge: Hindi', 'Fourier Series task',
+  'Completed Module 2', 'Torsional Pendulum Sim', 'Peer review in progress',
+  'RC Circuit task', 'Bernoulli Visualizer', 'Just joined', 'Listening',
+  'Code submission sent', 'Vernacular bridge: Kannada', 'Gallery browsing'
+];
+
+function renderStars(score) {
+  var s = Math.max(0, Math.min(5, Math.round(score || 0)));
+  var out = '';
+  for (var i = 1; i <= 5; i++) {
+    out += '<span style="color:' + (i <= s ? '#f59e0b' : 'var(--border)') + ';font-size:0.8rem">&#9733;</span>';
+  }
+  return out;
+}
+
+function addPoint(idx) {
+  var p = STATE.participants[idx];
+  if (!p) return;
+  p.score = Math.min(5, (p.score || 0) + 1);
+  var el = document.getElementById('stars_' + idx);
+  if (el) el.innerHTML = renderStars(p.score);
+  showToast('★ +1 point → ' + p.name + ' (' + p.score + '/5)');
 }
 
 // ============================================================
@@ -948,6 +1262,7 @@ var STATE = {
   galleryRevealed: false,
   activeLang: 'en',
   submissions: [],
+  deptData: [],
   pollData: [
     { label: 'Socratic Method Mastery', val: 78 },
     { label: 'AI Prompting Confidence', val: 62 },
@@ -983,156 +1298,29 @@ var SESSIONS = [
 ];
 
 var MOCK_SUBS = [
-  { author:'Vijay Kumar',  title:'Torsional Pendulum Simulation', time:'10:52 AM', code:'<!DOCTYPE html><html><body style="margin:0;background:#0a0a1a;display:flex;align-items:center;justify-content:center;height:100vh"><canvas id="c" width="320" height="240"></canvas><script>var cv=document.getElementById("c"),ctx=cv.getContext("2d"),th=0.5,om=2.5,t=0;function draw(){ctx.fillStyle="rgba(10,10,26,0.18)";ctx.fillRect(0,0,320,240);var cx=160,cy=40,L=140,x=cx+L*Math.sin(th*Math.cos(om*t)),y=cy+L*Math.cos(th*Math.cos(om*t));ctx.strokeStyle="#4ade80";ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(x,y);ctx.stroke();ctx.fillStyle="#22d3ee";ctx.beginPath();ctx.arc(x,y,14,0,Math.PI*2);ctx.fill();t+=0.018;requestAnimationFrame(draw);}draw();<\/script></body></html>' },
-  { author:'Karthik Iyer', title:'Beam Deflection Calculator',    time:'11:08 AM', code:'<!DOCTYPE html><html><body style="font-family:monospace;background:#f0fdf4;padding:20px"><h3 style="color:#065f46">Beam Deflection</h3><label>P (N):<input id="P" value="500"></label><br><label>L (m):<input id="L" value="2"></label><br><button onclick="var P=+document.getElementById(\'P\').value,L=+document.getElementById(\'L\').value;document.getElementById(\'out\').innerHTML=\'delta = \'+(P*Math.pow(L,3)/(3*200e9*8.33e-6)*1000).toFixed(4)+\' mm\'" style="margin-top:8px;padding:6px 14px;background:#059669;color:#fff;border:none;border-radius:6px;cursor:pointer">Calculate</button><div id="out" style="margin-top:12px;font-size:1.1rem;color:#065f46"></div></body></html>' },
-  { author:'Priya Nair',   title:'Socratic Prompt Chain',         time:'11:14 AM', code:'# Socratic Prompt Chain\nQ1 = "What happens when current doubles?"\nQ2 = "Why does resistance oppose current?"\nQ3 = "Where does Ohm\'s Law break down?"' },
-  { author:'Rahul Verma',  title:'RC Circuit Transient Response', time:'11:19 AM', code:'<!DOCTYPE html><html><body style="background:#fff0f9;padding:20px"><canvas id="c" width="400" height="200" style="border:1px solid #ddd;border-radius:8px"></canvas><script>var cv=document.getElementById("c"),ctx=cv.getContext("2d"),R=1000,C=100e-6,Vs=5;ctx.strokeStyle="#9333ea";ctx.lineWidth=2;ctx.beginPath();for(var i=0;i<400;i++){var tt=i*(5*R*C/400),V=Vs*(1-Math.exp(-tt/(R*C))),x=i,y=200-(V/Vs)*180;i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);}ctx.stroke();<\/script></body></html>' },
-  { author:'Arjun Sharma', title:'Bernoulli Visualizer',          time:'11:23 AM', code:'<!DOCTYPE html><html><body style="background:#eff6ff;padding:20px"><svg width="380" height="140"><path d="M20,40 Q100,20 180,40 L180,100 Q100,120 20,100 Z" fill="#93c5fd" opacity="0.7"/><path d="M180,50 Q280,30 360,65 L360,100 Q280,115 180,90 Z" fill="#3b82f6" opacity="0.7"/></svg><p style="color:#1d4ed8;font-size:13px;font-family:monospace">P + half*rho*v^2 + rho*g*h = const</p></body></html>' },
-  { author:'Sneha Patil',  title:'Hindi Concept Bridge',          time:'11:31 AM', code:'# Resistance = Pratirodhh (Hindi)\n# V = I * R (Ohm\'s Law)\nR, I = 47, 0.22\nV = I * R\nprint(f"Voltage = {V:.2f} V")' },
-  { author:'Ravi Shankar', title:'Fourier Series Animation',      time:'11:37 AM', code:'<!DOCTYPE html><html><body style="background:#fff7ed;padding:20px"><canvas id="c" width="400" height="180"></canvas><script>var cv=document.getElementById("c"),ctx=cv.getContext("2d");function sq(x,n){var s=0;for(var k=0;k<n;k++){var m=2*k+1;s+=Math.sin(m*x)/m;}return s*(4/Math.PI);}[[9,"#f97316"],[3,"#ea580c"],[1,"#9a3412"]].forEach(function(p){ctx.strokeStyle=p[1];ctx.lineWidth=1.5;ctx.beginPath();for(var i=0;i<400;i++){var x=i*(4*Math.PI/400)-2*Math.PI,y=90-sq(x,p[0])*70;i===0?ctx.moveTo(i,y):ctx.lineTo(i,y);}ctx.stroke();});<\/script></body></html>' }
+  { author:'Vijay Kumar',  title:'Torsional Pendulum Simulation', time:'10:52 AM', po:'PO3', code:'<!DOCTYPE html><html><body style="margin:0;background:#0a0a1a;display:flex;align-items:center;justify-content:center;height:100vh"><canvas id="c" width="320" height="240"></canvas><script>var cv=document.getElementById("c"),ctx=cv.getContext("2d"),th=0.5,om=2.5,t=0;function draw(){ctx.fillStyle="rgba(10,10,26,0.18)";ctx.fillRect(0,0,320,240);var cx=160,cy=40,L=140,x=cx+L*Math.sin(th*Math.cos(om*t)),y=cy+L*Math.cos(th*Math.cos(om*t));ctx.strokeStyle="#4ade80";ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(x,y);ctx.stroke();ctx.fillStyle="#22d3ee";ctx.beginPath();ctx.arc(x,y,14,0,Math.PI*2);ctx.fill();t+=0.018;requestAnimationFrame(draw);}draw();<\/script></body></html>' },
+  { author:'Karthik Iyer', title:'Beam Deflection Calculator',    time:'11:08 AM', po:'PO1', code:'<!DOCTYPE html><html><body style="font-family:monospace;background:#f0fdf4;padding:20px"><h3 style="color:#065f46">Beam Deflection</h3><label>P (N):<input id="P" value="500"></label><br><label>L (m):<input id="L" value="2"></label><br><button onclick="var P=+document.getElementById(\'P\').value,L=+document.getElementById(\'L\').value;document.getElementById(\'out\').innerHTML=\'delta = \'+(P*Math.pow(L,3)/(3*200e9*8.33e-6)*1000).toFixed(4)+\' mm\'" style="margin-top:8px;padding:6px 14px;background:#059669;color:#fff;border:none;border-radius:6px;cursor:pointer">Calculate</button><div id="out" style="margin-top:12px;font-size:1.1rem;color:#065f46"></div></body></html>' },
+  { author:'Priya Nair',   title:'Socratic Prompt Chain',         time:'11:14 AM', po:'PO5', code:'# Socratic Prompt Chain\nQ1 = "What happens when current doubles?"\nQ2 = "Why does resistance oppose current?"\nQ3 = "Where does Ohm\'s Law break down?"' },
+  { author:'Rahul Verma',  title:'RC Circuit Transient Response', time:'11:19 AM', po:'PO3', code:'<!DOCTYPE html><html><body style="background:#fff0f9;padding:20px"><canvas id="c" width="400" height="200" style="border:1px solid #ddd;border-radius:8px"></canvas><script>var cv=document.getElementById("c"),ctx=cv.getContext("2d"),R=1000,C=100e-6,Vs=5;ctx.strokeStyle="#9333ea";ctx.lineWidth=2;ctx.beginPath();for(var i=0;i<400;i++){var tt=i*(5*R*C/400),V=Vs*(1-Math.exp(-tt/(R*C))),x=i,y=200-(V/Vs)*180;i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);}ctx.stroke();<\/script></body></html>' },
+  { author:'Arjun Sharma', title:'Bernoulli Visualizer',          time:'11:23 AM', po:'PO1', code:'<!DOCTYPE html><html><body style="background:#eff6ff;padding:20px"><svg width="380" height="140"><path d="M20,40 Q100,20 180,40 L180,100 Q100,120 20,100 Z" fill="#93c5fd" opacity="0.7"/><path d="M180,50 Q280,30 360,65 L360,100 Q280,115 180,90 Z" fill="#3b82f6" opacity="0.7"/></svg><p style="color:#1d4ed8;font-size:13px;font-family:monospace">P + half*rho*v^2 + rho*g*h = const</p></body></html>' },
+  { author:'Sneha Patil',  title:'Hindi Concept Bridge',          time:'11:31 AM', po:'PO5', code:'# Resistance = Pratirodhh (Hindi)\n# V = I * R (Ohm\'s Law)\nR, I = 47, 0.22\nV = I * R\nprint(f"Voltage = {V:.2f} V")' },
+  { author:'Ravi Shankar', title:'Fourier Series Animation',      time:'11:37 AM', po:'PO3', code:'<!DOCTYPE html><html><body style="background:#fff7ed;padding:20px"><canvas id="c" width="400" height="180"></canvas><script>var cv=document.getElementById("c"),ctx=cv.getContext("2d");function sq(x,n){var s=0;for(var k=0;k<n;k++){var m=2*k+1;s+=Math.sin(m*x)/m;}return s*(4/Math.PI);}[[9,"#f97316"],[3,"#ea580c"],[1,"#9a3412"]].forEach(function(p){ctx.strokeStyle=p[1];ctx.lineWidth=1.5;ctx.beginPath();for(var i=0;i<400;i++){var x=i*(4*Math.PI/400)-2*Math.PI,y=90-sq(x,p[0])*70;i===0?ctx.moveTo(i,y):ctx.lineTo(i,y);}ctx.stroke();});<\/script></body></html>' }
 ];
-
-// ============================================================
-// STATIC SESSION SCRIPTS
-// ============================================================
-var SESSION_SCRIPTS = [
-  { sections:[
-    {title:"1. OPENING HOOK", body:"Ask the room: 'Show of hands — how many of you used a search engine to prepare for today?' Pause. 'Now, how many of you asked an AI?' Share this: ChatGPT crossed 100 million users in 60 days — faster than Instagram. 'Today we are not here to debate AI. We are here to figure out how to lead it in our classrooms.'"},
-    {title:"2. SESSION OBJECTIVES", body:"By the end participants will: Define AI-driven pedagogy and distinguish it from technology-enhanced teaching. Identify three points in their course where AI can be embedded. Articulate AI as a thinking scaffold, not a shortcut. Reflect on their own comfort level and name one barrier."},
-    {title:"3. CORE CONTENT WALKTHROUGH", body:"Present the AI Literacy Stack for Educators:\n  Layer 1 - Awareness: What AI tools exist.\n  Layer 2 - Discernment: When AI helps vs bypasses learning.\n  Layer 3 - Design: Structuring tasks so AI is a collaborator.\n\nThree AI roles in engineering classrooms:\n  Tutor (Socratic dialogue), Simulation Engine (physics models), Vernacular Bridge (regional language access).\n\nLive demo: open the Socratic Tutor sandbox on the projector. Type a question about a torsional pendulum and show how the AI responds with questions, not answers."},
-    {title:"4. PARTICIPANT ACTIVITY", body:"Each participant opens the Participant Workspace. Types: 'I want to understand why a torsional pendulum returns to equilibrium.' Allow 5 minutes. Ask two volunteers: 'What did the AI ask back? Did it answer your question or redirect it?'"},
-    {title:"5. DISCUSSION PROMPTS", body:"'Think of a topic students consistently struggle with. Could an AI tutor help — and at what point in the learning sequence?'\n'What is the difference between a student using AI to complete an assignment versus understand a concept?'\n'If AI generates a Bernoulli simulation in seconds, what is the new value-add of the faculty member?'"},
-    {title:"6. ENGINEERING CONTEXT BRIDGES", body:"Mechanical: AI-generated torsional and beam simulations give visual feedback static diagrams cannot.\nElectronics: LLMs walk students through Ohm's Law with adaptive difficulty.\nCivil: Structural analysis concepts explored through AI-generated constraint problems."},
-    {title:"7. CLOSING SYNTHESIS", body:"'We have just seen AI as infrastructure — like the calculator in the 1980s. The question is never whether students will use it. The question is whether we design learning experiences sophisticated enough that using AI well requires genuine understanding.' Preview Session 2: Socratic questioning and prompt engineering."},
-    {title:"8. FACILITATOR TIPS", body:"Expect 2-3 participants concerned about academic integrity. Park the concern on a board and promise to address it in Session 4. Have a 2-minute screen-recorded fallback demo if internet fails. Session 1 energy: be curious and exploratory, not evangelical."}
-  ]},
-  { sections:[
-    {title:"1. OPENING HOOK", body:"Ask: 'What is the worst question a student has ever asked you?' Collect 2-3 answers. Then: 'Now — what is the BEST question a student asked? The one that made you stop and think?' Pause. 'That second question is a Socratic question. Today we teach AI to ask those questions, and teach ourselves to ask them better.'"},
-    {title:"2. SESSION OBJECTIVES", body:"By the end participants will: Explain the Socratic method in engineering education. Write a multi-turn prompt chain guiding AI to ask progressively deeper questions. Distinguish surface-level from boundary-condition questions. Use the Vernacular Bridge for bilingual dialogue."},
-    {title:"3. CORE CONTENT WALKTHROUGH", body:"Four levels of Socratic questioning:\n  Level 1 - Recall: 'What is Ohm's Law?'\n  Level 2 - Explanation: 'Why does resistance increase with temperature?'\n  Level 3 - Boundary Condition: 'At what temperature does the linear model break down?'\n  Level 4 - Transfer: 'How does this change in a superconductor near absolute zero?'\n\nDemo prompt engineering: write a system prompt instructing the LLM to respond only with Socratic questions. Show the Vernacular Bridge live — switch to Hindi and show 'restoring torque' appearing bilingual."},
-    {title:"4. PARTICIPANT ACTIVITY", body:"12 minutes:\n  Step 1: Choose a core concept from your course.\n  Step 2: Write a 3-turn Socratic chain escalating from recall to boundary condition.\n  Step 3: Toggle the Vernacular Bridge and observe how AI adapts.\n  Step 4: Submit via the Submission Module titled 'My Socratic Chain - [Topic]'."},
-    {title:"5. DISCUSSION PROMPTS", body:"'When does a Socratic question become frustrating rather than illuminating? How do you calibrate it for first-year vs final-year students?'\n'The AI never gives a direct answer. Is that pedagogically responsible? When should a teacher break the Socratic pattern?'\n'How could you use the Vernacular Bridge in your own explanations, not just AI tools?'"},
-    {title:"6. ENGINEERING CONTEXT BRIDGES", body:"CS: Prompt engineering is itself an engineering discipline. Writing a system prompt is analogous to writing a specification document.\nElectrical: Feedback loops map directly onto Socratic dialogue — each question is a probe signal, the student's response is the output.\nMechanical: Boundary condition analysis is the verbal equivalent of stress-testing a design."},
-    {title:"7. CLOSING SYNTHESIS", body:"'You have used AI to become a better questioner, not to get faster answers. The Socratic method is 2,500 years old. Prompt engineering is 5 years old. Together they may be the most powerful pedagogical combination available right now.' Preview Session 3: AI-assisted simulation building."},
-    {title:"8. FACILITATOR TIPS", body:"Celebrate basic prompt chains and then model a Level 3 boundary-condition question live to raise the bar. The Vernacular Bridge works best when participants choose the language they actually use with their students. Watch the clock — the activity tends to expand."}
-  ]},
-  { sections:[
-    {title:"1. OPENING HOOK", body:"Open your laptop silently. Navigate to Participant Workspace. Type 'Torsional Pendulum Simulation' in the submission module. Hit submit. It appears on the facilitator dashboard. Turn to the room: 'I just created and published a physics simulation in 30 seconds. This session is about what you can do with that capability today.'"},
-    {title:"2. SESSION OBJECTIVES", body:"By the end participants will: Use an LLM to generate a working HTML/JS or Python simulation. Critically evaluate it for physical accuracy. Submit to the dashboard and articulate its teaching application. Identify one concept in their course that benefits from a generative simulation."},
-    {title:"3. CORE CONTENT WALKTHROUGH", body:"The Specify-Generate-Verify workflow:\n\nSpecify: Contrast vague ('make a pendulum') vs precise ('Create HTML5 canvas animation of torsional pendulum where theta(t)=theta_0*cos(omega*t), omega=2.5, theta_0=0.5. Display the equation on screen.').\n\nGenerate: Paste output into the code editor. Click Preview Sim to run it on the projector.\n\nVerify: 'Does this match physical reality? What assumptions is the simulation making? What does it get wrong?' AI generates, humans verify.\n\nWalk through three mock submissions using Preview Sim: Torsional Pendulum, RC Circuit, Beam Deflection."},
-    {title:"4. PARTICIPANT ACTIVITY", body:"20-minute sprint:\n  Step 1: Choose a concept with motion, flow, or spatial geometry.\n  Step 2: Write a precise specification and paste into an LLM.\n  Step 3: Copy the code into the submission module.\n  Step 4: Submit to the facilitator dashboard.\n  Step 5: Facilitator opens 3-4 submissions live. Class evaluates each."},
-    {title:"5. DISCUSSION PROMPTS", body:"'When a student submits an AI-generated simulation, what are you assessing — physics understanding, specification ability, or verification skill? Are these different?'\n'The simulation assumes no damping. Is discovering that gap more valuable than a textbook explanation of damping?'\n'Could you replace your next lab session with an AI-generated simulation? What is lost? What is gained?'"},
-    {title:"6. ENGINEERING CONTEXT BRIDGES", body:"Civil: Beam deflection visualisers with adjustable load and cross-section. Students explore how I affects deflection in real time.\nElectronics: RC transient response curves animated in HTML5 canvas — intuition for time constants before the oscilloscope.\nFluid: Bernoulli visualisations with adjustable pipe geometry."},
-    {title:"7. CLOSING SYNTHESIS", body:"'Every simulation today was generated in minutes, verified by engineers, and is ready for classroom use. The bottleneck is no longer production — it is your pedagogical judgement about what to build.' Evening challenge: generate one simulation for your next scheduled class. Preview Day 2."},
-    {title:"8. FACILITATOR TIPS", body:"Non-coders: reassure them they do not need to understand the code, only verify the physics. That is the skill. Have 3 backup prompts: spring-mass system, RLC resonance, projectile trajectory. Keep facilitator view on projector throughout — Preview Sim is the showpiece."}
-  ]},
-  { sections:[
-    {title:"1. OPENING HOOK", body:"Say nothing. Toggle Gallery Reveal ON. Watch participants see all submissions appear simultaneously. 60 seconds of silence. Then: 'What you just experienced is peer learning made instantaneous. No waiting for printed reports. Reflection is only useful when grounded in something real. Today the real thing is your own work.'"},
-    {title:"2. SESSION OBJECTIVES", body:"By the end participants will: Conduct structured peer review using a three-point rubric. Distinguish evaluating AI output from evaluating student understanding. Identify one course change from today's learning. Draft an AI Integration Statement for their course outline."},
-    {title:"3. CORE CONTENT WALKTHROUGH", body:"Peer Review Rubric (display on projector):\n  Criterion 1 - Accuracy: Does the simulation correctly represent the engineering principle?\n  Criterion 2 - Pedagogical Intent: How would this be used? What learning outcome does it serve?\n  Criterion 3 - AI Transparency: What did the AI generate vs what did the faculty member design and verify?\n\nWalk through one gallery submission together applying all three criteria. Model constructive feedback language.\n\nAddress academic integrity directly: 'If your rubric rewards the product, AI wins. If your rubric rewards the reasoning, AI becomes a tool, not a replacement.'"},
-    {title:"4. PARTICIPANT ACTIVITY", body:"Pairs review (15 min):\n  Step 1: Select one gallery submission that is not yours.\n  Step 2: Apply the three-point rubric. Write 2-3 sentences of Socratic feedback.\n  Step 3: Share one insight aloud — 1 minute each.\n\nIndividual (5 min): Write your AI Integration Statement — one paragraph on how you will use AI in one session of your next course."},
-    {title:"5. DISCUSSION PROMPTS", body:"'When you reviewed a peer's simulation, what surprised you most — the quality of the AI output or the quality of the human framing around it?'\n'Should students document which parts of their submission were AI-generated? What are the practical implications?'\n'If you redesigned your next exam with AI access allowed, what would the question look like?'"},
-    {title:"6. ENGINEERING CONTEXT BRIDGES", body:"Design Review Culture: Every engineering design goes through peer review before fabrication. AI simulation peer review is the same discipline applied to pedagogy.\nCode Review: Modern software teams review code to transfer knowledge, not just catch bugs. Peer review here serves the same function.\nQuality Assurance: Verification and Validation (V&V) are foundational to engineering. Today's rubric is the pedagogical equivalent."},
-    {title:"7. CLOSING SYNTHESIS", body:"'You arrived curious about AI. You leave having built AI-assisted simulations, practised Socratic prompt engineering, reviewed peers, and written an integration plan. That is not exploration — it is implementation.' Homework: refine the AI Integration Statement. Preview Day 2."},
-    {title:"8. FACILITATOR TIPS", body:"The academic integrity discussion can run long — time-box to 8 minutes and redirect to assessment design rather than policing. Celebrate Integration Statements by asking 3-4 people to read theirs aloud. End Day 1 on time."}
-  ]},
-  { sections:[
-    {title:"1. OPENING HOOK", body:"'Last night, how many of you tried to build the simulation you promised yourself?' Show of hands. 'Perfect — whether you did or did not, today we make it real.' Generate a spring-mass damper simulation live in 90 seconds from one LLM prompt. The room watches it animate. 'That is what we are doing at scale — not one simulation, but a library built by this room, for your students.'"},
-    {title:"2. SESSION OBJECTIVES", body:"By the end participants will: Design a complete AI-assisted simulation with accurate physics and pedagogical scaffolding. Apply iterative prompt refinement across 2-3 generations. Identify common AI simulation failure modes and correct them. Publish a simulation to the shared gallery."},
-    {title:"3. CORE CONTENT WALKTHROUGH", body:"Iterative Simulation Design Workflow:\n\n  Round 1 - First generation: Full physics specification. Generate, paste, preview.\n  Round 2 - Diagnosis: What is wrong? Is the equation correct? Units consistent? Animation physically intuitive?\n  Round 3 - Refinement: Feed diagnosis back. 'Add a damping term b*d(theta)/dt and show amplitude decaying exponentially.' Generate again. Compare.\n\nDemo live with torsional pendulum: undamped, then critically damped, then overdamped. Show adding interactive sliders for omega, theta_0, and damping b."},
-    {title:"4. PARTICIPANT ACTIVITY", body:"30-minute design sprint:\n  Step 1: Select a concept involving a differential equation, conservation law, or geometry.\n  Step 2: Write Round 1 specification. Generate, paste, preview.\n  Step 3: Diagnose output. Write one correction. Run Round 2.\n  Step 4: Add one interactive element (slider or button).\n  Step 5: Submit to facilitator dashboard.\n\nFacilitator opens 5 most distinctive submissions. Class discusses: 'What did AI get right without being told? What did it consistently miss?'"},
-    {title:"5. DISCUSSION PROMPTS", body:"'In Round 2 refinement you had to diagnose what was wrong. That required deep subject knowledge. Is this workflow raising the expertise bar, not lowering it?'\n'A student submits a simulation with a sign error in the restoring force. The pendulum diverges. How do you assess that? What did they demonstrate?'\n'If AI generates any simulation from a specification, the most valuable skill is writing the specification. How does that change what you teach in first-year courses?'"},
-    {title:"6. ENGINEERING CONTEXT BRIDGES", body:"Control Systems: Root locus plots and step response curves for second-order systems. Students adjust damping ratio and see stability boundaries in real time.\nThermodynamics: Heat transfer through composite walls with adjustable thermal conductivity.\nStructural: Mode shapes for a simply-supported beam. Students add point loads and observe deflection dynamically."},
-    {title:"7. CLOSING SYNTHESIS", body:"'Look at what this room built in 30 minutes — simulations spanning Mechanical, Electrical, Civil, and CS. A team of instructional designers would need three months. That is not incremental improvement — it is structural change.' Preview Session 6: language bridges and vernacular integration."},
-    {title:"8. FACILITATOR TIPS", body:"Protect the 30-minute sprint fiercely from walkthrough overruns. Circulate and identify the 5-6 most interesting or problematic outputs before the debrief — curation is your highest-value contribution. Fast finishers: add a second simulation comparing two physical scenarios."}
-  ]},
-  { sections:[
-    {title:"1. OPENING HOOK", body:"'Close your eyes. Think of the moment you first truly understood a concept in engineering — not memorised, but understood.' Ask two people to describe that moment. It almost always involves an analogy, a demonstration, or a translation between abstract and concrete. 'That moment of translation is what the Vernacular Bridge creates — systematically, for every student, in the language they think most clearly in.'"},
-    {title:"2. SESSION OBJECTIVES", body:"By the end participants will: Design a bilingual AI prompt for engineering concept explanation with regional language key terms. Use the Vernacular Bridge for a classroom activity accessible to students with varying English fluency. Articulate the pedagogical argument for vernacular integration. Create one bilingual concept card ready for classroom use."},
-    {title:"3. CORE CONTENT WALKTHROUGH", body:"Three levels of vernacular integration:\n  Level 1 - Glossary: Key terms translated. ('Resistance = Pratirodhh')\n  Level 2 - Explanation: Concept explained using local cultural analogies. ('Think of current like water in a village irrigation channel — resistance is the narrowing.')\n  Level 3 - Dialogue: The Socratic tutor conducts reasoning in the learner's preferred language, switching to English only for technical notation.\n\nDemo all three levels using the Vernacular Bridge toggle. Switch between Kannada, Hindi, and Marathi. Show how mathematical precision is maintained across languages."},
-    {title:"4. PARTICIPANT ACTIVITY", body:"Bilingual Concept Card Workshop (20 min):\n  Step 1: Select one core concept from your course.\n  Step 2: Conduct a 4-turn dialogue in the Socratic Tutor with Vernacular Bridge enabled.\n  Step 3: Extract (a) English explanation, (b) 5 key terms with translations, (c) one local analogy.\n  Step 4: Submit as a Concept Card via the submission module.\n  Step 5: Facilitator reveals gallery. Class votes on most memorable analogy using the poll."},
-    {title:"5. DISCUSSION PROMPTS", body:"'When AI translates a concept into a regional language, who is responsible for accuracy — the AI, the teacher, or the institution? What quality control would you put in place?'\n'Is there a risk that vernacular-first explanation lowers English fluency expectations? How do you balance the two?'\n'The AI used an irrigation channel analogy for current flow. Was it accurate? Where might it mislead a student?'"},
-    {title:"6. ENGINEERING CONTEXT BRIDGES", body:"Rural Infrastructure: Civil engineers communicating technical specs to village panchayats need vernacular technical communication — it is a professional skill.\nManufacturing: Safety protocols in regional languages reduce industrial accidents. Graduates who communicate bilingually are more valuable.\nAgriculture Tech: IoT sensor systems deployed in agricultural contexts need vernacular-first interfaces. Students who understand this design better products."},
-    {title:"7. CLOSING SYNTHESIS", body:"'Every concept card you created is a bridge — between the language your students inherited and the language your discipline requires. That bridge is not a concession to lower standards. It is a higher-order pedagogical act.' Preview Session 7: Gallery presentations and the full integration plan."},
-    {title:"8. FACILITATOR TIPS", body:"Invite participants to share the cultural analogies the AI generated — these are often surprising and build energy. Watch for reluctance to use regional languages due to institutional pressure. Frame it as additive, not subtractive. The poll widget is perfect for this session."}
-  ]},
-  { sections:[
-    {title:"1. OPENING HOOK", body:"No words. Toggle Gallery Reveal ON. Let participants see two days of accumulated work — simulations, Socratic chains, concept cards, bilingual glossaries — displayed simultaneously. 60 seconds of silent scrolling. 'What you are looking at is not workshop outputs. It is a prototype of what an AI-enhanced engineering curriculum looks like — built in two days, by this room, for your students.'"},
-    {title:"2. SESSION OBJECTIVES", body:"By the end participants will: Present one AI-assisted artefact and articulate its pedagogical rationale in under 3 minutes. Provide and receive structured feedback. Synthesise two days of learning into a coherent AI Teaching Integration Plan. Identify one next action to take within 7 days."},
-    {title:"3. CORE CONTENT WALKTHROUGH", body:"Two anchors before presentations:\n\nAnchor 1 - Portfolio Mindset: 'What you built is the beginning of a teaching portfolio — a curated set of AI-enhanced resources representing your pedagogical philosophy. The discipline is in the curation.'\n\nAnchor 2 - The Four-Element Integration Plan:\n  Element 1: The Concept — which topic?\n  Element 2: The Artefact — simulation, Socratic chain, or concept card?\n  Element 3: Deployment Point — before class, during lecture, in tutorial, or in assessment?\n  Element 4: Assessment Adaptation — how does your rubric change?\n\nModel one example integration plan using your own teaching context."},
-    {title:"4. PARTICIPANT ACTIVITY", body:"Gallery Presentation Rotation (35 min):\n  Each participant gets 2.5 minutes:\n    (a) Open their best submission on the projector.\n    (b) State concept, artefact type, and deployment point.\n    (c) Receive one Socratic question from the room.\n\nFacilitator uses the Add Point button to award engagement stars in real time.\n\nFinal 10 minutes: each participant writes their 4-element Integration Plan. Three volunteers share aloud."},
-    {title:"5. DISCUSSION PROMPTS", body:"'What surprised you most about what your peers built? What does that tell you about the range of AI applications in engineering education?'\n'Your integration plan has a deployment point. What preparation does a student need before their first AI-assisted learning activity?'\n'If you showed a student the simulation you built and asked them to improve it, what would they need to know?'"},
-    {title:"6. ENGINEERING CONTEXT BRIDGES", body:"Design-Build-Test Cycle: This programme was a compressed engineering design cycle — identify problem, design solutions, build, test, iterate. The process is the lesson.\nSystems Thinking: An AI-integrated course is a system. Changes to assessment propagate through everything. Design the whole.\nEngineering Communication: Every presentation today is engineering communication — translating a technical artefact into a clear audience-appropriate explanation."},
-    {title:"7. CLOSING SYNTHESIS", body:"'Two days ago you were curious about AI. You leave having built tools, challenged assumptions, bridged languages, and designed learning experiences. That transition is irreversible.' 7-day challenge: deploy one artefact in an actual class and message the group when you do. The real experiment begins now."},
-    {title:"8. FACILITATOR TIPS", body:"Keep presentations to exactly 2.5 minutes — use a visible timer. Equity of airtime models the discipline you want participants to carry back. Use Add Point generously and visibly. Do not skip the written Integration Plan — it converts inspiration into commitment."}
-  ]},
-  { sections:[
-    {title:"1. OPENING HOOK", body:"'Before we close, I want to acknowledge something. Every person here showed up and chose to engage seriously with a technology that is genuinely uncertain, genuinely powerful, and genuinely changing your profession. That takes intellectual courage.' Pause. 'This final session is a commitment ceremony — to your students, your practice, and each other.'"},
-    {title:"2. SESSION OBJECTIVES", body:"By the end participants will: Articulate a personal vision for AI-integrated teaching in one sentence. Identify a peer accountability partner for the 30-day follow-up. Give and receive recognition for specific contributions. Leave with a concrete, dated, public next action."},
-    {title:"3. CORE CONTENT WALKTHROUGH", body:"Three short anchors:\n\nAnchor 1 - The Long Arc: 'Every major shift in engineering education — slide rule, calculator, computer, internet, LMS — was resisted, then accommodated, then integrated, then invisible. AI is on that arc. The question is how quickly, and with whose intentional design. You are now part of the group that designs it.'\n\nAnchor 2 - The Responsibility Frame: 'AI in the classroom is not neutral. Simulations encode assumptions. Socratic prompts shape thinking. Language bridges can include or exclude. Your pedagogical judgement is not less important in an AI classroom — it is more important.'\n\nAnchor 3 - Community of Practice: 'What happens after you leave determines whether this was a workshop or a transformation. Regular sharing, honest feedback, collective refinement — that is what turns individual learning into institutional change.'"},
-    {title:"4. PARTICIPANT ACTIVITY", body:"Closing Ceremony (30 min):\n\n  Recognition Round (10 min): Nominate one person per table for a specific contribution. Award stars visibly. Participants can also nominate peers.\n\n  One-Sentence Vision (10 min): Each participant writes their AI teaching vision. 3-4 share aloud. Collect and photograph all cards.\n\n  Accountability Partners (5 min): Pair with someone from a different department. Commitment: share one classroom AI deployment update within 30 days.\n\n  Public Next Action (5 min): Each person states: 'Within 7 days, I will ___.' Record on the board."},
-    {title:"5. DISCUSSION PROMPTS", body:"'What is the one thing from these two days that most directly changes what you will do in your next class?'\n'Who in your institution most needs to see what you have built here? How will you share it?'\n'What does responsible AI integration look like in your specific context — your students, your resources, your institutional culture?'"},
-    {title:"6. ENGINEERING CONTEXT BRIDGES", body:"Project Closure: Every engineering project has a formal closure phase — documentation, lessons learned, handover. This session is the pedagogical equivalent.\nStandards and Ethics: Engineering practice is governed by codes of ethics. AI integration requires the same disciplined ethical thinking — about bias, accuracy, accessibility, and academic integrity. You are practitioners in a field without established standards. You have the opportunity to help write them.\nContinuous Improvement: The Kaizen principle — small continuous improvements by people closest to the work — applies here. Start with your own classroom. You do not need institutional permission."},
-    {title:"7. CLOSING SYNTHESIS", body:"'The best engineering education does not give students answers. It gives them the capacity to ask better questions, build better models, and revise their thinking when the model fails. You have spent two days doing exactly that. Take that same rigour back to your classrooms. Your students are waiting for it.'"},
-    {title:"8. FACILITATOR TIPS", body:"The tone is warm and unhurried. Do not rush the recognition round — it is the emotional peak of two days and participants need it. Integrate any formal certificates into the recognition round. Send a follow-up within 48 hours: gallery screenshots, one-sentence vision cards, and a 30-day check-in date. That follow-through is what separates a good workshop from a lasting programme."}
-  ]}
-];
-
-function renderStaticScript(idx) {
-  var data = SESSION_SCRIPTS[idx];
-  if (!data) return;
-  var body = document.getElementById('facScriptBody');
-  if (!body) return;
-  body.innerHTML = data.sections.map(function(sec){
-    return '<div class="script-section">'
-      + '<div class="script-section-title">' + sec.title + '</div>'
-      + '<div class="script-section-body">' + sec.body.replace(/\n/g,'<br>') + '</div>'
-      + '</div>';
-  }).join('');
-  var session = SESSIONS[idx];
-  document.getElementById('scriptModalTitle').textContent = session.label;
-  document.getElementById('scriptModalSub').textContent = 'Day ' + session.day + ' - ' + session.duration;
-  document.getElementById('scriptModalContent').textContent = data.sections.map(function(s){ return s.title + '\n\n' + s.body; }).join('\n\n---\n\n');
-}
-
-// ============================================================
-// GEMINI API
-// ============================================================
-function getApiKey() {
-  var el = document.getElementById('geminiApiKey');
-  return (el ? el.value.trim() : '') || localStorage.getItem('aikep_gemini_key') || '';
-}
-
-async function callGemini(contents, systemInstruction) {
-  var key = getApiKey();
-  if (!key) throw new Error('No Gemini API key. Paste your key in the Gemini API Key field.');
-  var body = { contents: contents, generationConfig: { temperature: 0.7, maxOutputTokens: 1024 } };
-  if (systemInstruction) body.system_instruction = { parts: [{ text: systemInstruction }] };
-  var res = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=' + key,
-    { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
-  var data = await res.json();
-  if (data.error) throw new Error(data.error.message || 'Gemini API error');
-  return (data.candidates && data.candidates[0] && data.candidates[0].content &&
-    data.candidates[0].content.parts && data.candidates[0].content.parts[0].text) || '';
-}
 
 // ============================================================
 // INIT
 // ============================================================
 window.addEventListener('load', function() {
+  if (typeof brython === 'function') brython({ debug: 1 });
+
   var params = new URLSearchParams(window.location.search);
   var role = params.get('role') || localStorage.getItem('aikep_role') || 'facilitator';
-  // Always honour URL param — overwrite any previously stored role
   if (params.get('role')) localStorage.setItem('aikep_role', params.get('role'));
   else localStorage.setItem('aikep_role', role);
 
   if (role === 'participant') {
-    // Lock participant view: hide facilitator tab, disable onclick
     var tabFac = document.getElementById('tabFac');
-    if (tabFac) {
-      tabFac.style.display = 'none';
-    }
-    // Also retitle the header so participants see their role clearly
+    if (tabFac) tabFac.style.display = 'none';
     var liveLabel = document.querySelector('.live-badge');
     if (liveLabel) liveLabel.innerHTML = '<div class="live-dot"></div>PARTICIPANT';
     switchView('par');
@@ -1142,11 +1330,8 @@ window.addEventListener('load', function() {
 
   var setup = getSetup();
   PARTICIPANT_NAME = setup.name || 'Participant';
-  if (setup.url && setup.key) {
-    initSupabase(setup.url, setup.key);
-  } else {
-    showSetup();
-  }
+  if (setup.url && setup.key) initSupabase(setup.url, setup.key);
+  else showSetup();
 
   var savedKey = localStorage.getItem('aikep_gemini_key') || '';
   var keyEl = document.getElementById('geminiApiKey');
@@ -1164,8 +1349,23 @@ window.addEventListener('load', function() {
     if (gt) gt.checked = true;
   }
 
-  STATE.submissions = JSON.parse(JSON.stringify(MOCK_SUBS));
+  var storedSubs = localStorage.getItem('aikep_submissions');
+  if (storedSubs) {
+    try {
+      var parsed = JSON.parse(storedSubs);
+      STATE.submissions = parsed.length ? parsed : JSON.parse(JSON.stringify(MOCK_SUBS));
+    } catch(e) { STATE.submissions = JSON.parse(JSON.stringify(MOCK_SUBS)); }
+  } else {
+    STATE.submissions = JSON.parse(JSON.stringify(MOCK_SUBS));
+  }
 
+  var savedTheme = localStorage.getItem('aikep_theme') || 'light';
+  applyTheme(savedTheme);
+
+  // Synchronized render baseline — all visualization paths fire here, at the very
+  // bottom of the load sequence, after all state is fully established. This ensures
+  // renderStaticScript and all peer functions exist before any async Supabase
+  // callbacks can invoke applyRoomState().
   renderSessionBtns();
   renderStaticScript(STATE.currentSession);
   renderParticipantTable();
@@ -1173,11 +1373,11 @@ window.addEventListener('load', function() {
   renderPollChart();
   renderTimeline();
   renderInitialChat();
+  renderDeptChart();
+  renderPoChart();
 
   if (STATE.galleryRevealed) applyGalleryState(true);
-
-  var savedTheme = localStorage.getItem('aikep_theme') || 'light';
-  applyTheme(savedTheme);
+  updateProgressRing();
 
   setInterval(liveTick, 5000);
   setInterval(function() {
@@ -1188,9 +1388,190 @@ window.addEventListener('load', function() {
   }, 8000);
 });
 
+// ============================================================
+// PREVIEW MODAL & SANDBOX CONSOLE ENGINE
+// ============================================================
+function openPreview(i) {
+  var sub = STATE.submissions[i];
+  document.getElementById('modalTitle').textContent = sub.title;
+  document.getElementById('modalSubtitle').textContent = 'by '+sub.author+' - '+sub.time;
+  document.getElementById('modalCode').textContent = sub.code;
+  document.querySelectorAll('.rubric-stars').forEach(function(el){ el.dataset.val='0'; renderRubricStars(el); });
+  document.querySelectorAll('.rubric-note').forEach(function(el){ el.value=''; });
+  
+  var iframe = document.getElementById('previewIframe');
+  var isHTML = /<!DOCTYPE|<html|<canvas|<svg|<script/i.test(sub.code);
+  
+  if (isHTML) {
+    // Advanced Canvas Live Tracer Code Injected
+    var debugTracer = [
+      '<script>',
+      'window.onerror = function(msg, url, line) {',
+      '  var d = document.createElement("div");',
+      '  d.style.cssText = "position:fixed;bottom:0;left:0;right:0;background:#ef4444;color:#fff;font-family:monospace;padding:8px;font-size:11px;z-index:99999;border-top:2px solid #b91c1c;word-break:break-all";',
+      '  d.innerHTML = "<strong>Runtime Error:</strong> " + msg + " (Line " + line + ")";',
+      '  document.body.appendChild(d);',
+      '  return false;',
+      '};',
+      '<\/script>'
+    ].join('\n');
+    iframe.srcdoc = debugTracer + sub.code;
+  } else {
+    // Encoded Brython Runtime Bootstrap Environment
+    var encoded = btoa(unescape(encodeURIComponent(sub.code)));
+    iframe.srcdoc = [
+      '<!DOCTYPE html><html><head>',
+      '<script src="https://cdnjs.cloudflare.com/ajax/libs/brython/3.12.4/brython.min.js"><\/script>',
+      '<script src="https://cdnjs.cloudflare.com/ajax/libs/brython/3.12.4/brython_stdlib.min.js"><\/script>',
+      '</head>',
+      '<body onload="brython()" style="margin:0;background:#0f172a;color:#38bdf8;font-family:monospace;font-size:13px;padding:12px;min-height:100vh;box-sizing:border-box">',
+      '<div style="color:#475569;margin-bottom:6px;font-size:11px;letter-spacing:0.04em">&#9654; Python Console &mdash; Brython 3.12</div>',
+      '<div id="out" style="white-space:pre-wrap;line-height:1.65;word-break:break-word"></div>',
+      '<script>window.__pycode__ = "' + encoded + '";<\/script>',
+      '<script type="text/python">',
+      'from browser import document, window',
+      'import sys, base64',
+      'out = document["out"]',
+      'class _TW:',
+      '    def write(self, t):',
+      '        s = document.createElement("span")',
+      '        s.text = t',
+      '        out <= s',
+      '    def flush(self): pass',
+      'sys.stdout = _TW()',
+      'sys.stderr = _TW()',
+      'try:',
+      '    src = base64.b64decode(window.__pycode__).decode("utf-8")',
+      '    exec(compile(src, "<submission>", "exec"))',
+      'except Exception as e:',
+      '    err = document.createElement("span")',
+      '    err.style.color = "#f87171"',
+      '    err.text = type(e).__name__ + ": " + str(e)',
+      '    out <= err',
+      '<\/script>',
+      '</body></html>'
+    ].join('\n');
+  }
+  document.getElementById('previewModal').style.display = 'flex';
+  document.body.classList.add('no-scroll');
+}
+
+function closeModal() {
+  document.getElementById('previewModal').style.display = 'none';
+  document.getElementById('previewIframe').srcdoc = '';
+  document.body.classList.remove('no-scroll');
+}
 
 // ============================================================
-// SESSION CONTROL
+// SUBMIT ENGINE
+// ============================================================
+function submitToFacilitator() {
+  var title = (document.getElementById('submissionTitle').value||'').trim() || 'Untitled Simulation';
+  var code  = (document.getElementById('codeInput').value||'').trim();
+  if (!code) { showToast('Please paste some code first', true); return; }
+  var now  = new Date();
+  var time = now.toLocaleTimeString('en-IN', { hour:'2-digit', minute:'2-digit' });
+  var poEl = document.getElementById('submissionPO');
+  var po   = poEl ? poEl.value || 'PO1' : 'PO1';
+  var sub  = { author: PARTICIPANT_NAME || 'Participant', title: title, code: code, time: time, po: po };
+  
+  STATE.submissions.unshift(sub);
+  localStorage.setItem('aikep_submissions', JSON.stringify(STATE.submissions));
+  sbInsertSubmission(sub);
+  renderSubmissionFeed();
+  renderDeptChart();
+  renderPoChart();
+  
+  if (STATE.galleryRevealed) { renderGallery(); renderParGallery(); }
+  STATE.participants[6].activity = 'Submitted: '+title.substring(0,22);
+  renderParticipantTable();
+  showToast('Submitted "'+title+'" to Facilitator Map matrix!');
+  document.getElementById('submissionTitle').value = '';
+}
+
+// ============================================================
+// CHART GENERATORS (DEPT & NBA MATRIX)
+// ============================================================
+function renderDeptChart() {
+  var el = document.getElementById('deptChartBody');
+  if (!el) return;
+  try {
+    var counts = { Mechanical:0, Electronics:0, Civil:0, 'CS / IT':0 };
+    STATE.submissions.forEach(function(s) {
+      var combined = (s.title + ' ' + s.code).toLowerCase();
+      if (/pendulum|beam|torsion|stress|strain|deflect|thermal|fluid|bernoulli/.test(combined)) counts['Mechanical']++;
+      else if (/circuit|voltage|current|rc|rl|fourier|signal|ohm|resistor/.test(combined)) counts['Electronics']++;
+      else if (/truss|load|moment|column|foundation|soil|concrete|bridge/.test(combined)) counts['Civil']++;
+      else counts['CS / IT']++;
+    });
+    var deptData = [
+      { label:'Mechanical', icon:'&#9881;',  val:counts['Mechanical'],  color:'#0891b2' },
+      { label:'Electronics',icon:'&#9889;',  val:counts['Electronics'], color:'#6d28d9' },
+      { label:'Civil',      icon:'&#127981;',val:counts['Civil'],       color:'#059669' },
+      { label:'CS / IT',    icon:'&#128187;',val:counts['CS / IT'],     color:'#d97706' }
+    ];
+    var maxVal = Math.max.apply(null, deptData.map(function(d){return d.val;})) || 1;
+    el.innerHTML = deptData.map(function(d) {
+      var pct = Math.round((d.val / maxVal) * 100);
+      return '<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">'
+        + '<span style="font-size:0.95rem;width:18px;text-align:center">' + d.icon + '</span>'
+        + '<div style="flex:1">'
+        +   '<div style="display:flex;justify-content:space-between;font-size:0.7rem;margin-bottom:3px">'
+        +     '<span style="color:var(--text2);font-weight:500">' + d.label + '</span>'
+        +     '<span style="font-family:var(--font-mono);color:var(--text3)">' + d.val + ' sub</span>'
+        +   '</div>'
+        +   '<div style="background:var(--bg4);border-radius:999px;height:7px;overflow:hidden">'
+        +     '<div style="height:100%;border-radius:999px;background:'+d.color+';width:'+pct+'%;transition:width 0.6s cubic-bezier(0.4,0,0.2,1)"></div>'
+        +   '</div>'
+        + '</div></div>';
+    }).join('');
+  } catch(e) { console.error('Dept tracker exception:', e); }
+}
+
+function renderPoChart() {
+  var el = document.getElementById('poChartBody');
+  if (!el) return;
+  try {
+    var matrix = { PO1:0, PO3:0, PO5:0 };
+    STATE.submissions.forEach(function(s) {
+      var target = s.po || 'PO1';
+      if (matrix.hasOwnProperty(target)) matrix[target]++;
+    });
+    var poMetadata = [
+      { id:'PO1', label:'PO1: Core Knowledge', val:matrix['PO1'], color:'#059669' },
+      { id:'PO3', label:'PO3: Design Solutions', val:matrix['PO3'], color:'#6d28d9' },
+      { id:'PO5', label:'PO5: Modern Tool Usage', val:matrix['PO5'], color:'#0891b2' }
+    ];
+    var maxPO = Math.max.apply(null, poMetadata.map(function(p){return p.val;})) || 1;
+    el.innerHTML = poMetadata.map(function(p) {
+      var widthPct = Math.round((p.val / maxPO) * 100);
+      return '<div style="display:flex;flex-direction:column;gap:3px">'
+        + '<div style="display:flex;justify-content:space-between;font-size:0.7rem;color:var(--text2)">'
+        +   '<span>' + p.label + '</span>'
+        +   '<span style="font-family:var(--font-mono);font-weight:700">' + p.val + '</span>'
+        + '</div>'
+        + '<div style="background:var(--bg4);border-radius:4px;height:6px;overflow:hidden">'
+        +   '<div style="height:100%;background:'+p.color+';width:'+widthPct+'%;transition:width 0.5s ease"></div>'
+        + '</div></div>';
+    }).join('');
+  } catch(err) { console.error('PO calculation failed:', err); }
+}
+
+// ============================================================
+// CHAT & ACCELERATED FORMULA PALETTE INTERFACE
+// ============================================================
+function insertFormula(str) {
+  var el = document.getElementById('chatInput');
+  if (!el) return;
+  var cur = el.value;
+  var spacing = cur.length && cur[cur.length-1] !== ' ' ? ' ' : '';
+  el.value = cur + spacing + str + ' ';
+  el.focus();
+  el.setSelectionRange(el.value.length, el.value.length);
+}
+
+// ============================================================
+// CORE BACKEND UTILITIES (PRESERVED FROM ORIGINAL ARCHITECTURE)
 // ============================================================
 function rebuildSessionStatuses(idx) {
   SESSIONS.forEach(function(s, j) {
@@ -1208,6 +1589,107 @@ function renderSessionBtns() {
   }).join('');
 }
 
+function renderStaticScript(idx) {
+  var bodyEl = document.getElementById('facScriptBody');
+  if (!bodyEl) return;
+
+  var session = SESSIONS[idx];
+  if (!session) return;
+
+  // Per-session static script data: [Opening Hook, Objectives, Core Content, Activity, Closing]
+  var scripts = [
+    {
+      hook:    'Open with the question: "Has a machine ever taught you something your professor could not?" Pause for 3 seconds. Let the silence work. Then say: "Today, we find out."',
+      objectives: 'Participants will: (1) Understand what AI-driven pedagogy means in an engineering context. (2) Distinguish AI as a tool vs. AI as a tutor. (3) Set personal learning intentions for the 2-day KEP.',
+      content: 'Walk through the AI-in-Education landscape — from rule-based CAI in the 1970s to today\'s LLM-powered Socratic tutors. Use the slide: "What changed in 2022?" Emphasise: AI does not replace the facilitator — it amplifies the Socratic method. Draw the triangle: Student ↔ AI ↔ Facilitator.',
+      activity: 'Quick Poll (2 min): Ask participants to rate their current AI familiarity on a scale of 1–5 using the Live Poll module. Display results on the facilitator dashboard. Use the distribution to calibrate your pace for the day.',
+      closing:  'Summarise the three mindset shifts: from consumer to co-creator, from passive to Socratic, from answer-seeking to question-sharpening. Set the agenda for Session 2.'
+    },
+    {
+      hook:    'Show a poorly-written ChatGPT prompt on screen. Ask: "What is wrong with this?" Collect 3 answers. Then show the Socratic-reframed version. Ask: "Which one would you learn more from — and why?"',
+      objectives: 'Participants will: (1) Define the Socratic method and map it to LLM interaction patterns. (2) Construct multi-turn prompt chains that deepen reasoning. (3) Identify the difference between answer-extraction and concept-exploration prompts.',
+      content: 'Introduce the 4-layer Socratic Prompt Stack: Recall → Probe → Challenge → Synthesise. Demonstrate live using the Socratic Tutor Sandbox. Show how changing one word in a prompt shifts the AI response from declarative to interrogative.',
+      activity: 'Pairs activity (8 min): Each pair picks one engineering concept (e.g., Ohm\'s Law, Bernoulli\'s Principle). They build a 3-turn Socratic prompt chain in the Sandbox. Debrief: one pair shares their chain; group critiques the depth of questioning.',
+      closing:  'Reinforce: the best prompt is the one that makes the student think harder, not the one that gives the clearest answer. Preview Session 3: they will now build tools, not just prompts.'
+    },
+    {
+      hook:    'Ask: "If you had to explain torsion to a student using only a wet towel and a question — what would you ask?" Take two answers. Bridge to: "That\'s exactly what we\'re building today — questions that run as code."',
+      objectives: 'Participants will: (1) Use AI tools (Gemini, Brython sandbox) to generate simulation scaffolds. (2) Validate AI-generated code against physical principles. (3) Submit at least one working simulation to the facilitator dashboard.',
+      content: 'Live demo: prompt Gemini to generate a torsional pendulum canvas simulation. Run it in the Brython sandbox. Identify one physical inaccuracy together. Show how to prompt iteratively to correct it. Key message: AI drafts — the engineer validates.',
+      activity: 'Lab session (25 min): Participants choose any engineering concept from their domain. They prompt, generate, test, and submit via the Live Submission Module. Facilitator monitors the submission feed and PO matrix in real time.',
+      closing:  'Gallery preview: show the submission feed populating live. Tease the gallery reveal in Session 7. Remind participants to map their submission to the correct PO (PO1/PO3/PO5).'
+    },
+    {
+      hook:    'Display the submission feed anonymised. Ask: "Without knowing who made this — what would you improve? Be specific." This is peer review, Socratic-style.',
+      objectives: 'Participants will: (1) Apply the 3-criterion assessment rubric (Accuracy, Pedagogical Intent, AI Transparency). (2) Give structured written feedback on a peer\'s simulation. (3) Reflect on their own learning arc across Day 1.',
+      content: 'Walk through the rubric criteria using the Preview Modal as a live example. Emphasise: AI Transparency means the participant can explain every line — not just that "AI wrote it". Show how a score of 0/5 on transparency affects the total even with perfect accuracy.',
+      activity: 'Rubric exercise (15 min): Open two submissions in the Preview Modal. Participants score independently, then compare scores in pairs. Discuss divergence. Facilitator aggregates scores and shows the live total on the dashboard.',
+      closing:  'Day 1 synthesis: participants write one sentence — "The question I am now asking that I was not asking this morning is…" Collect verbally. Bridge to Day 2: simulation design + vernacular bridge.'
+    },
+    {
+      hook:    'Ask: "What is the difference between a simulation and a model?" Take 3 answers. Write them on a virtual whiteboard. Then: "Today you will build something that is both — and it will teach."',
+      objectives: 'Participants will: (1) Design a pedagogically-intentioned simulation with clear learning outcomes. (2) Use AI iteratively to refine physical accuracy and UX. (3) Document the AI-human collaboration process in their submission.',
+      content: 'Introduce the Simulation Design Canvas: Learning Objective → Physical Principle → Interaction Design → Validation Protocol. Walk through one complete example (RC Circuit Transient). Show how each canvas layer maps to a PO in the NBA framework.',
+      activity: 'Design sprint (30 min): Participants complete their Simulation Design Canvas, then implement and submit. Facilitator coaches pairs who are stuck on the physics validation step. Use the Socratic Tutor Sandbox as a co-designer.',
+      closing:  'Checkpoint: how many PO1, PO3, PO5 submissions does the matrix show? Are any outcomes under-represented? Ask participants to intentionally address gaps in their next submission.'
+    },
+    {
+      hook:    'Say: "Repeat after me — in your mother tongue — the definition of electric current." Listen. Then: "That is the vernacular bridge. Now let\'s build it into your AI tools."',
+      objectives: 'Participants will: (1) Use the Vernacular Bridge toggle to prompt the Socratic Tutor in Kannada, Hindi, or Marathi. (2) Identify where code-switching enhances conceptual clarity for students. (3) Design one bilingual prompt chain.',
+      content: 'Demo the lang-btn toggle live. Show how the same Socratic prompt chain yields different cognitive entry points in different languages. Discuss: what is lost and what is gained? Introduce the culturally-grounded analogy technique — e.g., explaining Bernoulli\'s principle using a dhow sail.',
+      activity: 'Vernacular pair activity (15 min): Each participant selects their preferred language. They rebuild their Session 2 prompt chain bilingually. Pairs from different language backgrounds compare — what translated cleanly, what required re-framing?',
+      closing:  'Key insight: language is not just translation — it is cognitive scaffolding. A student who understands Ohm\'s Law in their mother tongue first will formalise it in English faster. Bridge to Session 7: gallery and presentations.'
+    },
+    {
+      hook:    'Reveal the gallery toggle. Watch the gallery populate across all participant screens simultaneously. Say nothing for 5 seconds. Then: "That is what 25 engineers built in 6 hours with AI. Now critique it."',
+      objectives: 'Participants will: (1) Present their simulation with a 90-second Socratic framing — not a demo, a question. (2) Receive structured rubric feedback from peers. (3) Identify one improvement they would make given another hour.',
+      content: 'Gallery walk protocol: each presenter states their simulation\'s Learning Objective, the Physical Principle it encodes, and the one question it is designed to provoke in a student. Audience uses the rubric modal to score. Facilitator projects the live leaderboard.',
+      activity: 'Presentations (25 min): 5–6 volunteers present. Each gets 90 seconds + 60 seconds Q&A. Remaining participants submit rubric scores via the modal. Facilitator highlights the highest-scoring submission and explains why on each rubric dimension.',
+      closing:  'Synthesis: the gallery is now a permanent teaching resource. Each simulation maps to a PO. Show the PO matrix — is it balanced? What does the dept distribution chart reveal about your cohort\'s strengths?'
+    },
+    {
+      hook:    'Ask: "What is the one question you will ask your next batch of students — that you could not have asked before today?" Collect answers. These become the closing artefact of the KEP.',
+      objectives: 'Participants will: (1) Articulate a concrete AI-integration plan for their next engineering course. (2) Identify at least one Socratic simulation they will deploy in class within 30 days. (3) Complete the programme reflection and peer recognition.',
+      content: 'Walk through the 30-Day Action Plan template: one Socratic prompt chain, one simulation, one vernacular bridge moment, one peer review session. Show how the KEP tools (Sandbox, Gallery, Submission Module) can be replicated in a personal Supabase project at zero cost.',
+      activity: 'Peer recognition (10 min): participants nominate one peer whose simulation most changed their thinking — and state why in one sentence. Facilitator reads out nominations. Award the top-rated submission from the PO matrix.',
+      closing:  'Close with the original question: "Has a machine ever taught you something your professor could not?" Pause. Then: "You are now both the professor and the machine. Go teach." Thank participants. Share the KEP resource link.'
+    }
+  ];
+
+  var data = scripts[idx] || scripts[0];
+  var s = session;
+
+  var sections = [
+    { title: '1. OPENING HOOK', body: data.hook },
+    { title: '2. SESSION OBJECTIVES', body: data.objectives },
+    { title: '3. CORE CONTENT WALKTHROUGH', body: data.content },
+    { title: '4. PARTICIPANT ACTIVITY', body: data.activity },
+    { title: '5. CLOSING SYNTHESIS', body: data.closing },
+    { title: 'FACILITATOR TIP', body: 'If energy drops, open the Live Poll and ask participants to rate their current comprehension 1-5. Use the result to decide whether to extend the activity or move to synthesis.' }
+  ];
+
+  var html = sections.map(function(sec) {
+    return '<div class="script-section">'
+      + '<div class="script-section-title">' + sec.title + '</div>'
+      + '<div class="script-section-body">' + escHtml(sec.body) + '</div>'
+      + '</div>';
+  }).join('');
+
+  bodyEl.innerHTML = html;
+
+  // Sync the script modal content so Full Screen / openScriptModal() works immediately
+  var modalContent = document.getElementById('scriptModalContent');
+  if (modalContent) {
+    modalContent.textContent = sections.map(function(sec) {
+      return sec.title + '\n' + sec.body;
+    }).join('\n\n');
+  }
+  var modalTitle = document.getElementById('scriptModalTitle');
+  if (modalTitle) modalTitle.textContent = s.label;
+  var modalSub = document.getElementById('scriptModalSub');
+  if (modalSub) modalSub.textContent = 'Day ' + s.day + ' · ' + s.duration + ' — Static Script';
+}
+
 function setSession(i) {
   STATE.currentSession = i;
   rebuildSessionStatuses(i);
@@ -1220,11 +1702,9 @@ function setSession(i) {
   localStorage.setItem('aikep_current_session', i);
   sbSetRoomState('current_session', i);
   showToast('Session updated: ' + label);
+  updateProgressRing();
 }
 
-// ============================================================
-// TIMELINE
-// ============================================================
 function renderTimeline() {
   var el = document.getElementById('participantTimeline');
   if (!el) return;
@@ -1239,24 +1719,6 @@ function renderTimeline() {
   }).join('');
 }
 
-// ============================================================
-// PARTICIPANT TABLE
-// ============================================================
-function renderStars(score) {
-  var s='';
-  for(var k=1;k<=5;k++) s+='<span class="'+(k<=score?'star-filled':'star-empty')+'">'+(k<=score?'&#9733;':'&#9734;')+'</span>';
-  return s;
-}
-
-function addPoint(i) {
-  if (STATE.participants[i].score < 5) {
-    STATE.participants[i].score++;
-    var el = document.getElementById('stars_'+i);
-    if (el) el.innerHTML = renderStars(STATE.participants[i].score);
-    showToast('+1 point: ' + STATE.participants[i].name);
-  }
-}
-
 function renderParticipantTable() {
   var el = document.getElementById('participantTable');
   if (!el) return;
@@ -1267,19 +1729,17 @@ function renderParticipantTable() {
   if (statEl) statEl.textContent = online;
   el.innerHTML = '<thead><tr><th>Name</th><th>Status</th><th>Activity</th><th>Rating</th><th>Action</th></tr></thead>'
     + '<tbody>' + STATE.participants.map(function(p,i){
+      // Automated Socratic Dialogue Assessment Assistant Evaluation Heuristic
+      var evalBadge = '';
+      if (p.activity.includes('Socratic sandbox')) {
+        evalBadge = '<span style="display:block;font-size:0.58rem;font-family:var(--font-mono);color:var(--accent3);margin-top:2px">🤖 Profile Verified</span>';
+      }
       return '<tr><td style="font-weight:600">'+p.name+'</td>'
         +'<td><span class="status-dot '+p.status+'"></span>'+(p.status==='online'?'Online':'Idle')+'</td>'
-        +'<td><span class="activity-tag" title="'+p.activity+'">'+p.activity+'</span></td>'
+        +'<td><span class="activity-tag" title="'+p.activity+'">'+p.activity+'</span>'+evalBadge+'</td>'
         +'<td><span style="font-size:0.75rem" id="stars_'+i+'">'+renderStars(p.score)+'</span></td>'
         +'<td><button class="add-pt-btn" onclick="addPoint('+i+')">&#9733; +1</button></td></tr>';
     }).join('') + '</tbody>';
-}
-
-// ============================================================
-// SUBMISSIONS
-// ============================================================
-function escHtml(s) {
-  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 }
 
 function renderSubmissionFeed() {
@@ -1291,7 +1751,10 @@ function renderSubmissionFeed() {
       +'<span style="font-weight:600;font-size:0.78rem">'+s.author+'</span>'
       +'<span style="font-family:var(--font-mono);font-size:0.62rem;color:var(--text3)">'+s.time+'</span></div>'
       +'<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">'
-      +'<span style="font-size:0.74rem;color:var(--fac);font-weight:500">'+s.title+'</span>'
+      +'<div style="display:flex;align-items:center;gap:6px;min-width:0">'
+      +'<span style="font-size:0.74rem;color:var(--fac);font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+s.title+'</span>'
+      +(s.po ? '<span style="font-size:0.6rem;font-family:var(--font-mono);padding:1px 6px;border-radius:4px;background:rgba(109,40,217,0.1);color:var(--fac);border:1px solid rgba(109,40,217,0.2);flex-shrink:0">'+s.po+'</span>' : '')
+      +'</div>'
       +'<button class="preview-btn" onclick="openPreview('+i+')">&#128065; Preview</button></div>'
       +'<div style="font-family:var(--font-mono);font-size:0.7rem;color:var(--code-text);background:var(--bg4);border-radius:6px;padding:8px;max-height:72px;overflow-y:auto;white-space:pre-wrap;word-break:break-all;border:1px solid var(--border)">'+escHtml(s.code)+'</div>'
       +'</div>';
@@ -1302,50 +1765,6 @@ function renderSubmissionFeed() {
   if (stat) stat.textContent = STATE.submissions.length;
 }
 
-// ============================================================
-// PREVIEW MODAL
-// ============================================================
-function openPreview(i) {
-  var sub = STATE.submissions[i];
-  document.getElementById('modalTitle').textContent = sub.title;
-  document.getElementById('modalSubtitle').textContent = 'by '+sub.author+' - '+sub.time;
-  document.getElementById('modalCode').textContent = sub.code;
-  var iframe = document.getElementById('previewIframe');
-  var isHTML = /<!DOCTYPE|<html|<canvas|<svg|<script/i.test(sub.code);
-  iframe.srcdoc = isHTML ? sub.code
-    : '<!DOCTYPE html><html><body style="font-family:monospace;font-size:13px;padding:16px;background:#f0fdf4;color:#065f46;white-space:pre-wrap">'+escHtml(sub.code)+'</body></html>';
-  document.getElementById('previewModal').style.display = 'flex';
-}
-function closeModal() {
-  document.getElementById('previewModal').style.display = 'none';
-  document.getElementById('previewIframe').srcdoc = '';
-}
-document.addEventListener('keydown', function(e){ if(e.key==='Escape'){closeModal();closeScriptModal();} });
-
-// ============================================================
-// SUBMIT
-// ============================================================
-function submitToFacilitator() {
-  var title = (document.getElementById('submissionTitle').value||'').trim() || 'Untitled Simulation';
-  var code  = (document.getElementById('codeInput').value||'').trim();
-  if (!code) { showToast('Please paste some code first', true); return; }
-  var now  = new Date();
-  var time = now.toLocaleTimeString('en-IN', { hour:'2-digit', minute:'2-digit' });
-  var sub  = { author: PARTICIPANT_NAME || 'Participant', title: title, code: code, time: time };
-  STATE.submissions.unshift(sub);
-  localStorage.setItem('aikep_submissions', JSON.stringify(STATE.submissions));
-  sbInsertSubmission(sub);
-  renderSubmissionFeed();
-  if (STATE.galleryRevealed) { renderGallery(); renderParGallery(); }
-  STATE.participants[6].activity = 'Submitted: '+title.substring(0,22);
-  renderParticipantTable();
-  showToast('Submitted "'+title+'" to Facilitator!');
-  document.getElementById('submissionTitle').value = '';
-}
-
-// ============================================================
-// GALLERY
-// ============================================================
 function toggleGallery(on) {
   STATE.galleryRevealed = on;
   localStorage.setItem('aikep_gallery_revealed', on);
@@ -1363,12 +1782,12 @@ function applyGalleryState(on) {
   }
   var toggle = document.getElementById('galleryToggle');
   if (toggle) toggle.checked = on;
-  // Sync toggle thumb CSS (since we use custom toggle CSS)
   var track = document.querySelector('.toggle-track');
   if (track && on) { track.style.background='var(--accent3)'; }
   else if (track)  { track.style.background=''; }
 
   if (on) {
+    renderDeptChart();
     renderGallery();
     var pgc = document.getElementById('parGalleryCard');
     if (pgc) pgc.style.display = '';
@@ -1402,18 +1821,16 @@ function renderGallery() {
 function renderParGallery() {
   var el = document.getElementById('parGalleryWall');
   if (!el) return;
-  el.innerHTML = STATE.submissions.map(function(s){
+  el.innerHTML = STATE.submissions.map(function(s, i){
     return '<div style="background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:12px;animation:popIn 0.35s cubic-bezier(0.34,1.56,0.64,1)">'
-      +'<div style="font-size:0.75rem;font-weight:600;margin-bottom:3px">'+s.title+'</div>'
+      +'<div style="font-size:0.75rem;font-weight:600;margin-bottom:3px;color:var(--text)">'+s.title+'</div>'
       +'<div style="font-size:0.67rem;color:var(--text3);margin-bottom:7px">by '+s.author+' - '+s.time+'</div>'
-      +'<div style="font-family:var(--font-mono);font-size:0.63rem;color:var(--code-text);background:var(--bg4);border-radius:5px;padding:6px;max-height:58px;overflow:hidden;white-space:pre;border:1px solid var(--border)">'+escHtml(s.code)+'</div>'
+      +'<div style="font-family:var(--font-mono);font-size:0.63rem;color:var(--code-text);background:var(--bg4);border-radius:5px;padding:6px;max-height:58px;overflow:hidden;white-space:pre;border:1px solid var(--border);margin-bottom:8px">'+escHtml(s.code)+'</div>'
+      +'<button class="preview-btn" onclick="openPreview('+i+')" style="width:100%;justify-content:center">&#128065; Run Simulation</button>'
       +'</div>';
   }).join('');
 }
 
-// ============================================================
-// POLL
-// ============================================================
 function renderPollChart() {
   var el = document.getElementById('pollChart');
   if (!el) return;
@@ -1435,31 +1852,6 @@ function refreshPoll() {
   });
   renderPollChart();
   showToast('Poll data refreshed');
-}
-
-// ============================================================
-// CHAT — Gemini API Socratic Tutor
-// ============================================================
-var CHAT_HISTORY = [];
-var LANG_NAMES = { en:'English', kn:'Kannada', hi:'Hindi', mr:'Marathi' };
-
-function buildSocraticSystemPrompt() {
-  var session = SESSIONS[STATE.currentSession];
-  var lang = LANG_NAMES[STATE.activeLang] || 'English';
-  var vNote = STATE.activeLang !== 'en'
-    ? 'The participant uses the Vernacular Bridge: '+lang+'. Weave brief '+lang+' translations of key technical terms alongside English. Key terms only, not full sentences.'
-    : '';
-  return 'You are an expert Socratic engineering tutor in a 2-day Knowledge Enhancement Programme for engineering faculty.\n\n'
-    +'CURRENT SESSION: "'+session.label+'" (Day '+session.day+', '+session.duration+')\n\n'
-    +'RULES:\n'
-    +'- Respond ONLY to what the participant just wrote. Analyse their exact words, assumptions, and gaps.\n'
-    +'- NEVER give a direct answer. Guide with a precise counter-question or targeted challenge addressing exactly what they said.\n'
-    +'- Probe exactly ONE: boundary conditions of their claim, mathematical structure implied, physical intuition behind their words, an engineering constraint they missed, or energy/dimensional logic.\n'
-    +'- Max 4 sentences. End with one sharp question advancing directly from what they said.\n'
-    +'- Redirect gently if off-topic.\n'
-    +'- Plain prose only. No markdown. No bullet lists. Inline formulas like tau=-kappa*theta.\n'
-    +(vNote?vNote+'\n':'')
-    +'TONE: Warm but rigorous. A doctoral supervisor who enjoys watching a student reach their own insight.';
 }
 
 function renderInitialChat() {
@@ -1525,23 +1917,23 @@ function setLang(lang, btn) {
   showToast('Vernacular bridge: '+btn.textContent);
 }
 
-// ============================================================
-// FACILITATOR SESSION SCRIPT (Gemini AI generation)
-// ============================================================
 async function generateSessionScript() {
   var key = getApiKey();
   if (!key) { showToast('Paste your Gemini API key first', true); return; }
   var session = SESSIONS[STATE.currentSession];
   var btn  = document.getElementById('scriptGenBtn');
   var body = document.getElementById('facScriptBody');
-  btn.disabled = true; btn.textContent = 'Generating...';
+  btn.disabled = true; btn.style.opacity='0.6'; btn.style.cursor='not-allowed'; btn.textContent = 'Generating...';
   body.innerHTML = '<div class="script-loading"><div class="script-spinner"></div>Gemini is writing your session script...</div>';
+  var LANG_NAMES_FULL = { en:'English', kn:'Kannada', hi:'Hindi', mr:'Marathi' };
+  var langName = LANG_NAMES_FULL[STATE.activeLang] || 'English';
+  var vernacularNote = STATE.activeLang !== 'en'
+    ? 'Write in English, but weave in '+langName+' translations of key technical terms throughout (English term followed by '+langName+' in parentheses). Include one culturally-relevant local analogy from '+langName+'-speaking regions of India per concept.'
+    : 'Write entirely in English.';
   var prompt = 'Write a detailed FACILITATOR PRESENTER SCRIPT for this session of a 2-Day Knowledge Enhancement Programme titled "AI-Driven Classroom for Effective Teaching and Learning in an Engineering Course".\n\n'
     +'SESSION: '+session.label+'\nDAY: Day '+session.day+'\nTIME SLOT: '+session.duration+'\n\n'
-    +'Include these sections:\n'
-    +'1. OPENING HOOK (2-3 min)\n2. SESSION OBJECTIVES (3-4 outcomes)\n3. CORE CONTENT WALKTHROUGH\n'
-    +'4. PARTICIPANT ACTIVITY (step-by-step)\n5. DISCUSSION PROMPTS (3-4 Socratic questions)\n'
-    +'6. ENGINEERING CONTEXT BRIDGES (2-3 domain examples)\n7. CLOSING SYNTHESIS (2-3 min)\n8. FACILITATOR TIPS\n\n'
+    +vernacularNote+'\n\n'
+    +'Include: 1.OPENING HOOK 2.SESSION OBJECTIVES 3.CORE CONTENT WALKTHROUGH 4.PARTICIPANT ACTIVITY 5.DISCUSSION PROMPTS 6.ENGINEERING CONTEXT BRIDGES 7.CLOSING SYNTHESIS 8.FACILITATOR TIPS\n\n'
     +'Address facilitator directly. 600-750 words. Plain text, no markdown.';
   try {
     var script = await callGemini([{role:'user',parts:[{text:prompt}]}]);
@@ -1558,7 +1950,7 @@ async function generateSessionScript() {
   } catch(err) {
     body.innerHTML = '<div style="padding:14px;color:var(--danger);font-size:0.8rem">Error: '+err.message+'</div>';
   }
-  btn.disabled = false; btn.textContent = '\u2726 Gemini AI';
+  btn.disabled = false; btn.style.opacity='1'; btn.style.cursor='pointer'; btn.textContent = '\u2726 Gemini AI';
 }
 
 function openScriptModal() {
@@ -1569,17 +1961,44 @@ function closeScriptModal() {
   document.getElementById('scriptModal').style.display = 'none';
 }
 
-// ============================================================
-// LIVE TICK & TOAST
-// ============================================================
-var ACTIVITIES = ['Socratic sandbox active','Reviewing timeline','LLM prompting task','Vernacular bridge active','Generating simulation','Code submission draft','Completed Socratic Module','Torsional Pendulum Sim','Fourier Series task','RC Circuit analysis','Beam deflection calc'];
-
 function liveTick() {
   var i = Math.floor(Math.random()*STATE.participants.length);
   if (STATE.participants[i].status==='online') {
     STATE.participants[i].activity = ACTIVITIES[Math.floor(Math.random()*ACTIVITIES.length)];
     renderParticipantTable();
   }
+}
+
+function renderRubricStars(el) {
+  var val = parseInt(el.dataset.val) || 0;
+  var html = '';
+  for (var k = 1; k <= 5; k++) { html += k <= val ? '&#9733;' : '&#9734;'; }
+  el.innerHTML = html;
+  updateRubricTotal();
+}
+
+function setRubricVal(el, e) {
+  var rect = el.getBoundingClientRect();
+  var x = e.clientX - rect.left;
+  var starW = rect.width / 5;
+  var val = Math.ceil(x / starW);
+  val = Math.max(1, Math.min(5, val));
+  if (parseInt(el.dataset.val) === val) val = 0;
+  el.dataset.val = val;
+  renderRubricStars(el);
+}
+
+function updateRubricTotal() {
+  var stars = document.querySelectorAll('.rubric-stars');
+  var total = 0;
+  stars.forEach(function(el){ total += parseInt(el.dataset.val) || 0; });
+  var el = document.getElementById('rubricTotal');
+  if (el) el.textContent = total + ' / 15';
+  // live-update leaderboard as scores change
+  var idx = STATE.submissions.findIndex(function(s){
+    return s.title === (document.getElementById('modalTitle')||{}).textContent;
+  });
+  if (idx >= 0 && total > 0) saveRubricScore(idx, total);
 }
 
 var _toastTimer;
@@ -1596,7 +2015,427 @@ function showToast(msg, warn) {
   _toastTimer = setTimeout(function(){ el.remove(); }, 3200);
 }
 
-// localStorage cross-tab fallback
+// ============================================================
+// CONFETTI ENGINE
+// ============================================================
+var _confettiAnimId = null;
+function triggerCelebration() {
+  var canvas = document.getElementById('confettiCanvas');
+  if (!canvas) return;
+  canvas.style.display = 'block';
+  canvas.width  = window.innerWidth;
+  canvas.height = window.innerHeight;
+  var ctx = canvas.getContext('2d');
+  var particles = [];
+  var colors = ['#6d28d9','#0891b2','#10b981','#f59e0b','#ec4899','#f97316','#a78bfa','#22d3ee'];
+  for (var i = 0; i < 200; i++) {
+    particles.push({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height - canvas.height,
+      r: Math.random() * 7 + 3,
+      d: Math.random() * 200 + 20,
+      color: colors[Math.floor(Math.random() * colors.length)],
+      tilt: Math.floor(Math.random() * 10) - 10,
+      tiltAngle: 0,
+      tiltAngleInc: (Math.random() * 0.07) + 0.05
+    });
+  }
+  var angle = 0;
+  function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    angle += 0.01;
+    particles.forEach(function(p, i) {
+      p.tiltAngle += p.tiltAngleInc;
+      p.y += (Math.cos(angle + p.d) + 1 + p.r / 2) * 1.5;
+      p.x += Math.sin(angle) * 1.5;
+      p.tilt = Math.sin(p.tiltAngle) * 12;
+      ctx.beginPath();
+      ctx.lineWidth = p.r;
+      ctx.strokeStyle = p.color;
+      ctx.moveTo(p.x + p.tilt + p.r / 2, p.y);
+      ctx.lineTo(p.x + p.tilt, p.y + p.tilt + p.r / 2);
+      ctx.stroke();
+    });
+    if (particles.some(function(p){ return p.y < canvas.height + 20; })) {
+      _confettiAnimId = requestAnimationFrame(draw);
+    } else {
+      canvas.style.display = 'none';
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+  }
+  if (_confettiAnimId) cancelAnimationFrame(_confettiAnimId);
+  draw();
+  setTimeout(function(){
+    cancelAnimationFrame(_confettiAnimId);
+    canvas.style.display = 'none';
+  }, 5000);
+}
+
+// ============================================================
+// COUNTDOWN TIMER
+// ============================================================
+var _timerInterval = null;
+var _timerSeconds  = 1800;
+var _timerRunning  = false;
+
+function startTimer() {
+  if (_timerRunning) {
+    clearInterval(_timerInterval);
+    _timerRunning = false;
+    document.getElementById('timerStartBtn').textContent = '\u25b6 Start';
+    return;
+  }
+  var preset = parseInt(document.getElementById('timerPreset').value);
+  if (!_timerRunning && _timerSeconds === parseInt(document.getElementById('timerPreset').value) * 60
+      || _timerSeconds <= 0) {
+    _timerSeconds = preset * 60;
+  }
+  _timerRunning = true;
+  document.getElementById('timerStartBtn').textContent = '\u23f8 Pause';
+  _timerInterval = setInterval(function() {
+    if (_timerSeconds <= 0) {
+      clearInterval(_timerInterval);
+      _timerRunning = false;
+      document.getElementById('timerStartBtn').textContent = '\u25b6 Start';
+      showToast('\u23f0 Time is up!', true);
+      triggerCelebration();
+      return;
+    }
+    _timerSeconds--;
+    updateTimerDisplay();
+  }, 1000);
+}
+
+function resetTimer() {
+  clearInterval(_timerInterval);
+  _timerRunning = false;
+  var preset = parseInt((document.getElementById('timerPreset') || {value:'30'}).value);
+  _timerSeconds = preset * 60;
+  updateTimerDisplay();
+  var btn = document.getElementById('timerStartBtn');
+  if (btn) btn.textContent = '\u25b6 Start';
+}
+
+function updateTimerDisplay() {
+  var el = document.getElementById('timerDisplay');
+  if (!el) return;
+  var m = Math.floor(_timerSeconds / 60);
+  var s = _timerSeconds % 60;
+  el.textContent = (m < 10 ? '0' : '') + m + ':' + (s < 10 ? '0' : '') + s;
+  el.className = 'timer-display' + (_timerSeconds <= 60 ? ' urgent' : '');
+}
+
+// ============================================================
+// LEADERBOARD
+// ============================================================
+var _rubricScores = {}; // key: submission index, val: { title, author, total }
+
+function saveRubricScore(idx, total) {
+  var sub = STATE.submissions[idx];
+  if (!sub) return;
+  _rubricScores[idx] = { title: sub.title, author: sub.author, total: total };
+  renderLeaderboard();
+}
+
+function renderLeaderboard() {
+  var el = document.getElementById('leaderboard');
+  var cnt = document.getElementById('lbCount');
+  if (!el) return;
+  var rows = Object.values(_rubricScores).sort(function(a,b){ return b.total - a.total; });
+  if (!rows.length) {
+    el.innerHTML = '<div style="font-size:0.74rem;color:var(--text3);text-align:center;padding:12px">Score submissions via the rubric to populate rankings.</div>';
+    if (cnt) cnt.textContent = '0 scored';
+    return;
+  }
+  if (cnt) cnt.textContent = rows.length + ' scored';
+  var medals = ['gold','silver','bronze'];
+  el.innerHTML = rows.slice(0,5).map(function(r,i){
+    return '<div class="lb-row" onclick="openPreviewByTitle(\'' + r.title.replace(/'/g,'\\x27') + '\')">'
+      + '<div class="lb-rank ' + (medals[i]||'') + '">' + (i===0?'\ud83e\udd47':i===1?'\ud83e\udd48':i===2?'\ud83e\udd49':'#'+(i+1)) + '</div>'
+      + '<div class="lb-info"><div class="lb-title">' + escHtml(r.title) + '</div><div class="lb-author">' + escHtml(r.author) + '</div></div>'
+      + '<div class="lb-score">' + r.total + '/15</div>'
+      + '</div>';
+  }).join('');
+}
+
+function openPreviewByTitle(title) {
+  var idx = STATE.submissions.findIndex(function(s){ return s.title === title; });
+  if (idx >= 0) openPreview(idx);
+}
+
+// ============================================================
+// VOW WALL
+// ============================================================
+var _vows = [];
+
+function openVowModal() {
+  document.getElementById('vowModal').style.display = 'flex';
+}
+function closeVowModal() {
+  document.getElementById('vowModal').style.display = 'none';
+}
+
+function submitVow() {
+  var q   = (document.getElementById('vowQuestion').value || '').trim();
+  var sim = (document.getElementById('vowSim').value || '').trim();
+  var ver = (document.getElementById('vowVernacular').value || '').trim();
+  if (!q) { showToast('Please write your Socratic question first', true); return; }
+  var vow = {
+    name: PARTICIPANT_NAME,
+    question: q,
+    sim: sim,
+    vernacular: ver,
+    time: new Date().toLocaleTimeString('en-IN', { hour:'2-digit', minute:'2-digit' })
+  };
+  _vows.push(vow);
+  renderVowWall();
+  // broadcast via Supabase if connected
+  if (_sbClient) {
+    _sbClient.from('vows').insert({
+      name: vow.name, question: vow.question, sim: vow.sim,
+      vernacular: vow.vernacular
+    }).then(function(){});
+  }
+  closeVowModal();
+  triggerCelebration();
+  showToast('\ud83e\udd1d Vow submitted! It is now live on the facilitator screen.');
+}
+
+function renderVowWall() {
+  var el = document.getElementById('vowWall');
+  var cnt = document.getElementById('vowCount');
+  if (!el) return;
+  if (!_vows.length) {
+    el.innerHTML = '<div style="font-size:0.74rem;color:var(--text3);text-align:center;padding:12px">Vows appear here when participants submit from Session 8.</div>';
+    if (cnt) cnt.textContent = '0 vows';
+    return;
+  }
+  if (cnt) cnt.textContent = _vows.length + ' vow' + (_vows.length > 1 ? 's' : '');
+  el.innerHTML = _vows.map(function(v) {
+    return '<div class="vow-card">'
+      + '<div class="vow-card-name">' + escHtml(v.name) + '</div>'
+      + '<div class="vow-card-text">\u201c' + escHtml(v.question) + '\u201d</div>'
+      + (v.sim ? '<div class="vow-card-meta">\ud83d\udcbb ' + escHtml(v.sim) + '</div>' : '')
+      + (v.vernacular ? '<div class="vow-card-meta">\ud83c\udf10 ' + escHtml(v.vernacular) + '</div>' : '')
+      + '<div class="vow-card-meta">' + v.time + '</div>'
+      + '</div>';
+  }).join('');
+}
+
+// ============================================================
+// PEER NOMINATIONS
+// ============================================================
+var _nominations = [];
+
+function submitNomination() {
+  var text = (document.getElementById('nomineeName').value || '').trim();
+  if (!text) { showToast('Write your nomination first', true); return; }
+  _nominations.push({ from: PARTICIPANT_NAME, text: text,
+    time: new Date().toLocaleTimeString('en-IN', { hour:'2-digit', minute:'2-digit' }) });
+  if (_sbClient) {
+    _sbClient.from('nominations').insert({ nom_from: PARTICIPANT_NAME, nom_text: text }).then(function(){});
+  }
+  renderNominations();
+  document.getElementById('nomineeName').value = '';
+  showToast('\ud83d\udcac Nomination sent!');
+}
+
+function renderNominations() {
+  var el = document.getElementById('nominationFeed');
+  var cnt = document.getElementById('nomCount');
+  if (!el) return;
+  if (!_nominations.length) {
+    el.innerHTML = '<div style="font-size:0.74rem;color:var(--text3);text-align:center;padding:8px">Nominations arrive when participants submit.</div>';
+    if (cnt) cnt.textContent = '0';
+    return;
+  }
+  if (cnt) cnt.textContent = _nominations.length;
+  el.innerHTML = _nominations.map(function(n){
+    return '<div class="nom-item"><strong>' + escHtml(n.from) + '</strong>: ' + escHtml(n.text) + ' <span style="color:var(--text3);font-size:0.62rem">' + n.time + '</span></div>';
+  }).join('');
+}
+
+// ============================================================
+// ACTION PLAN
+// ============================================================
+function openActionPlan() {
+  document.getElementById('actionPlanModal').style.display = 'flex';
+}
+function closeActionPlan() {
+  document.getElementById('actionPlanModal').style.display = 'none';
+}
+
+function exportActionPlan() {
+  var fields = ['plan1','plan2','plan3','plan4'];
+  var labels = [
+    '1. SOCRATIC PROMPT CHAIN',
+    '2. SIMULATION TO BUILD/ADAPT',
+    '3. VERNACULAR BRIDGE MOMENT',
+    '4. PEER REVIEW SESSION'
+  ];
+  var lines = [
+    'AI-KEP 30-DAY ACTION PLAN',
+    'Participant: ' + PARTICIPANT_NAME,
+    'Date: ' + new Date().toLocaleDateString('en-IN'),
+    '================================================',
+    ''
+  ];
+  fields.forEach(function(id, i){
+    var val = (document.getElementById(id).value || '').trim() || '(not filled)';
+    lines.push(labels[i]);
+    lines.push(val);
+    lines.push('');
+  });
+  lines.push('================================================');
+  lines.push('Generated by AI-KEP Dashboard — ISTE-BNY 2026');
+  var blob = new Blob([lines.join('\n')], { type: 'text/plain' });
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement('a');
+  a.href = url; a.download = 'AI-KEP-ActionPlan-' + PARTICIPANT_NAME.replace(/\s+/g,'-') + '.txt';
+  a.click();
+  URL.revokeObjectURL(url);
+  showToast('\u2b07 Action plan downloaded!');
+}
+
+// ============================================================
+// EXPORT RUBRIC (fixes the missing function)
+// ============================================================
+function exportRubric() {
+  var stars = document.querySelectorAll('.rubric-stars');
+  var notes = document.querySelectorAll('.rubric-note');
+  var labels = ['Accuracy', 'Pedagogical Intent', 'AI Transparency'];
+  var total = 0;
+  var lines = [
+    'AI-KEP ASSESSMENT RUBRIC EXPORT',
+    'Simulation: ' + (document.getElementById('modalTitle').textContent || 'Unknown'),
+    'Assessed by: ' + PARTICIPANT_NAME,
+    'Date: ' + new Date().toLocaleDateString('en-IN'),
+    '================================================',
+    ''
+  ];
+  stars.forEach(function(el, i){
+    var val = parseInt(el.dataset.val) || 0;
+    total += val;
+    lines.push(labels[i] + ': ' + val + '/5');
+    var note = notes[i] ? (notes[i].value || '').trim() : '';
+    if (note) lines.push('  Note: ' + note);
+  });
+  lines.push('');
+  lines.push('TOTAL: ' + total + '/15');
+  lines.push('');
+  lines.push('================================================');
+  // also save to leaderboard
+  var idx = STATE.submissions.findIndex(function(s){
+    return s.title === document.getElementById('modalTitle').textContent;
+  });
+  if (idx >= 0) saveRubricScore(idx, total);
+  var blob = new Blob([lines.join('\n')], { type: 'text/plain' });
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement('a');
+  a.href = url; a.download = 'Rubric-' + Date.now() + '.txt';
+  a.click();
+  URL.revokeObjectURL(url);
+  showToast('\ud83d\udcc4 Rubric exported + leaderboard updated!');
+}
+
+// ============================================================
+// CERTIFICATES
+// ============================================================
+function openCertModal() {
+  var el = document.getElementById('certList');
+  if (!el) return;
+  document.getElementById('certModal').style.display = 'flex';
+  // Build list from participants + top submission per person
+  el.innerHTML = STATE.participants.map(function(p, i){
+    var topSub = STATE.submissions.find(function(s){ return s.author.includes(p.name.split(' ')[0]); });
+    var scored = Object.values(_rubricScores).find(function(r){ return r.author && r.author.includes(p.name.split(' ')[0]); });
+    return '<div class="lb-row" onclick="downloadCert(\'' + p.name.replace(/'/g,'\\x27') + '\',\''
+      + (topSub ? topSub.title.replace(/'/g,'\\x27') : 'AI-KEP Simulation') + '\','
+      + (topSub ? '\'' + (topSub.po||'PO1') + '\'' : '\'PO1\'') + ','
+      + (scored ? scored.total : p.score * 3) + ')">'
+      + '<div class="lb-rank">\ud83c\udfab</div>'
+      + '<div class="lb-info"><div class="lb-title">' + escHtml(p.name) + '</div>'
+      + '<div class="lb-author">' + (topSub ? escHtml(topSub.title) : 'No submission yet') + '</div></div>'
+      + '<div class="lb-score" style="font-size:0.7rem;color:var(--accent3)">\u2b07 Download</div>'
+      + '</div>';
+  }).join('');
+}
+function closeCertModal() {
+  document.getElementById('certModal').style.display = 'none';
+}
+
+function downloadCert(name, simTitle, po, score) {
+  var date = new Date().toLocaleDateString('en-IN', { year:'numeric', month:'long', day:'numeric' });
+  var html = '<!DOCTYPE html><html><head><meta charset="UTF-8">'
+    + '<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=IBM+Plex+Sans:wght@400;600&display=swap" rel="stylesheet">'
+    + '<style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:\'IBM Plex Sans\',sans-serif;background:#09090f;color:#f0f0f8;display:flex;align-items:center;justify-content:center;min-height:100vh;padding:40px}'
+    + '.cert{width:720px;border:2px solid #6d28d9;border-radius:16px;padding:48px;background:linear-gradient(135deg,#111118,#18181f);box-shadow:0 0 60px rgba(109,40,217,0.3);text-align:center}'
+    + '.cert-header{font-family:\'Syne\',sans-serif;font-size:0.75rem;letter-spacing:0.2em;color:#6d28d9;text-transform:uppercase;margin-bottom:24px}'
+    + '.cert-title{font-family:\'Syne\',sans-serif;font-size:2.4rem;font-weight:800;background:linear-gradient(135deg,#a78bfa,#22d3ee);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:8px}'
+    + '.cert-sub{font-size:1rem;color:#9090a8;margin-bottom:36px}'
+    + '.cert-name{font-family:\'Syne\',sans-serif;font-size:1.8rem;font-weight:700;color:#f0f0f8;margin-bottom:6px;border-bottom:2px solid #6d28d9;padding-bottom:8px;display:inline-block;min-width:300px}'
+    + '.cert-body{font-size:0.9rem;color:#9090a8;margin:24px 0;line-height:1.7}'
+    + '.cert-sim{font-weight:600;color:#a78bfa;font-size:1rem}'
+    + '.cert-po{display:inline-block;padding:4px 14px;border-radius:999px;border:1px solid #6d28d9;color:#a78bfa;font-size:0.78rem;font-family:monospace;margin-top:8px}'
+    + '.cert-score{font-family:monospace;font-size:1rem;color:#22d3ee;margin-top:4px}'
+    + '.cert-footer{margin-top:36px;font-size:0.72rem;color:#5a5a72;letter-spacing:0.05em}'
+    + '.cert-seal{font-size:2.5rem;margin-bottom:16px}'
+    + '</style></head><body>'
+    + '<div class="cert">'
+    + '<div class="cert-seal">\ud83c\udf9f\ufe0f</div>'
+    + '<div class="cert-header">ISTE-BNY One Week Knowledge Enhancement Programme 2026</div>'
+    + '<div class="cert-title">Certificate of Completion</div>'
+    + '<div class="cert-sub">AI-Driven Classroom for Effective Teaching and Learning</div>'
+    + '<div class="cert-name">' + escHtml(name) + '</div>'
+    + '<div class="cert-body">has successfully completed the 2-day AI-KEP, demonstrating mastery of'
+    + ' Socratic AI prompting, engineering simulation design, and vernacular-bridge pedagogy.<br><br>'
+    + 'Top-rated submission: <span class="cert-sim">' + escHtml(simTitle) + '</span><br>'
+    + '<span class="cert-po">' + escHtml(po) + '</span><br>'
+    + '<span class="cert-score">Rubric Score: ' + score + '/15</span></div>'
+    + '<div class="cert-footer">' + date + ' &nbsp;|&nbsp; ISTE-BNY KEP 2026 &nbsp;|&nbsp; AI-KEP Dashboard</div>'
+    + '</div></body></html>';
+  var blob = new Blob([html], { type: 'text/html' });
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement('a');
+  a.href = url;
+  a.download = 'Certificate-' + name.replace(/\s+/g,'-') + '.html';
+  a.click();
+  URL.revokeObjectURL(url);
+  showToast('\ud83c\udfab Certificate downloaded for ' + name);
+}
+
+// ============================================================
+// SESSION PROGRESS RING
+// ============================================================
+function updateProgressRing() {
+  var circle = document.getElementById('progressRingCircle');
+  var text   = document.getElementById('progressRingText');
+  var pct    = document.getElementById('progressRingPct');
+  if (!circle) return;
+  var total = SESSIONS.length;
+  // count done sessions (those before current + current if marked done)
+  var done = SESSIONS.filter(function(s){ return s.status === 'done'; }).length;
+  var progress = done / total;
+  var circumference = 138.23;
+  circle.style.strokeDashoffset = circumference - (progress * circumference);
+  if (text) text.textContent = done + '/' + total;
+  if (pct)  pct.textContent  = Math.round(progress * 100) + '%';
+
+  // Show Session 8 vow actions when on last session
+  var s8 = document.getElementById('parSession8Actions');
+  if (s8) s8.style.display = STATE.currentSession === 7 ? 'flex' : 'none';
+}
+
+// ============================================================
+// TOGGLE GALLERY — wrap to add confetti
+// ============================================================
+var _origToggleGallery = toggleGallery;
+toggleGallery = function(on) {
+  _origToggleGallery(on);
+  if (on) triggerCelebration();
+};
+
+
 window.addEventListener('storage', function(e) {
   if (e.key==='aikep_current_session' && e.newValue!==null && !_sbClient) {
     var idx=parseInt(e.newValue);
